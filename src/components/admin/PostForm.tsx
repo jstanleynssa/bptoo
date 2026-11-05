@@ -26,6 +26,7 @@ export default function PostForm({ post, categories }: PostFormProps) {
   const [coverImageUrl, setCoverImageUrl] = useState(post?.cover_image_url ?? '')
   const [categoryId, setCategoryId] = useState(post?.category_id ?? '')
   const [status, setStatus] = useState<'draft' | 'published'>(post?.status ?? 'draft')
+  const [hoursSpent, setHoursSpent] = useState<string>(post?.hours_spent?.toString() ?? '')
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
 
@@ -48,6 +49,7 @@ export default function PostForm({ post, categories }: PostFormProps) {
       content: content || null,
       cover_image_url: coverImageUrl || null,
       category_id: categoryId || null,
+      hours_spent: hoursSpent ? parseFloat(hoursSpent) : null,
       status: finalStatus,
       published_at: finalStatus === 'published' && !post?.published_at ? new Date().toISOString() : post?.published_at ?? null,
     }
@@ -182,6 +184,18 @@ export default function PostForm({ post, categories }: PostFormProps) {
               <option key={cat.id} value={cat.id}>{cat.name}</option>
             ))}
           </select>
+        </div>
+
+        {/* Hours spent */}
+        <div>
+          <label className="block text-sm text-zinc-400 mb-2">Time spent <span className="text-zinc-600">(optional)</span></label>
+          <div className="flex items-center gap-2">
+            <input type="number" min="0" step="0.5" value={hoursSpent}
+              onChange={e => setHoursSpent(e.target.value)}
+              placeholder="e.g. 3.5"
+              className="w-32 px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:border-violet-500 outline-none transition-colors" />
+            <span className="text-sm text-zinc-500">hours</span>
+          </div>
         </div>
 
         {/* Cover image */}

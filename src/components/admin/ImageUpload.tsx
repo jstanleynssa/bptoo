@@ -2,8 +2,9 @@
 
 import { useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Upload, X, Loader2 } from 'lucide-react'
+import { Upload, X, Loader2, Library } from 'lucide-react'
 import Image from 'next/image'
+import MediaPicker from '@/components/admin/MediaPicker'
 
 interface ImageUploadProps {
   value: string
@@ -20,6 +21,7 @@ export default function ImageUpload({
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [pickerOpen, setPickerOpen] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   async function handleFile(file: File) {
@@ -81,25 +83,40 @@ export default function ImageUpload({
           </button>
         </div>
       ) : (
-        <div
-          onDrop={handleDrop}
-          onDragOver={e => e.preventDefault()}
-          onClick={() => inputRef.current?.click()}
-          className="border-2 border-dashed border-zinc-700 hover:border-violet-500 rounded-xl p-8 text-center cursor-pointer transition-colors group"
-        >
-          {uploading ? (
-            <div className="flex flex-col items-center gap-2 text-zinc-400">
-              <Loader2 size={24} className="animate-spin" />
-              <span className="text-sm">Uploading…</span>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center gap-2 text-zinc-500 group-hover:text-zinc-400 transition-colors">
-              <Upload size={24} />
-              <span className="text-sm">Drop image here or click to upload</span>
-              <span className="text-xs">PNG, JPG, GIF, WebP — max 10MB</span>
-            </div>
-          )}
+        <div>
+          <div
+            onDrop={handleDrop}
+            onDragOver={e => e.preventDefault()}
+            onClick={() => inputRef.current?.click()}
+            className="border-2 border-dashed border-zinc-700 hover:border-violet-500 rounded-xl p-8 text-center cursor-pointer transition-colors group"
+          >
+            {uploading ? (
+              <div className="flex flex-col items-center gap-2 text-zinc-400">
+                <Loader2 size={24} className="animate-spin" />
+                <span className="text-sm">Uploading…</span>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-2 text-zinc-500 group-hover:text-zinc-400 transition-colors">
+                <Upload size={24} />
+                <span className="text-sm">Drop image here or click to upload</span>
+                <span className="text-xs">PNG, JPG, GIF, WebP — max 10MB</span>
+              </div>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => setPickerOpen(true)}
+            className="mt-2 w-full flex items-center justify-center gap-2 py-2 text-sm text-zinc-500 hover:text-zinc-300 border border-zinc-800 hover:border-zinc-700 rounded-xl transition-colors"
+          >
+            <Library size={14} /> Browse library
+          </button>
         </div>
+      )}
+      {pickerOpen && (
+        <MediaPicker
+          onSelect={url => { onChange(url); setPickerOpen(false) }}
+          onClose={() => setPickerOpen(false)}
+        />
       )}
       {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
       <input

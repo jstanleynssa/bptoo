@@ -34,6 +34,7 @@ export interface Database {
           content: string | null
           cover_image_url: string | null
           category_id: string | null
+          hours_spent: number | null
           status: 'draft' | 'published'
           published_at: string | null
           created_at: string
@@ -58,6 +59,10 @@ export interface Database {
           images: string[]
           url: string | null
           github_url: string | null
+          project_status: 'done' | 'building' | 'paused' | 'scheming' | 'adrift' | 'abandoned' | null
+          hours_spent: number | null
+          video_url: string | null
+          attachments: { name: string; url: string; type: string }[]
           status: 'draft' | 'published'
           featured: boolean
           sort_order: number

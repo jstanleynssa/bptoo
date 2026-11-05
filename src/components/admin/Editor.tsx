@@ -1,14 +1,22 @@
 'use client'
 
-import { useEditor, EditorContent } from '@tiptap/react'
+import { useEditor, EditorContent, useEditorState } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
+import { ScreenplayBlock } from '@/components/admin/extensions/ScreenplayBlock'
+import { VideoEmbedNode } from '@/components/admin/extensions/VideoEmbed'
+import { ImageGridNode } from '@/components/admin/extensions/ImageGrid'
+import { Table } from '@tiptap/extension-table'
+import { TableRow } from '@tiptap/extension-table-row'
+import { TableHeader } from '@tiptap/extension-table-header'
+import { TableCell } from '@tiptap/extension-table-cell'
 import {
   Bold, Italic, Strikethrough, Code, Heading2, Heading3,
   List, ListOrdered, Quote, Minus, Link as LinkIcon,
-  Image as ImageIcon, Undo, Redo, Code2,
+  Image as ImageIcon, Undo, Redo, Code2, Film, Images, Clapperboard,
+  Table as TableIcon, RowsIcon, Columns3, Trash2,
 } from 'lucide-react'
 import { useCallback } from 'react'
 
@@ -49,7 +57,14 @@ export default function Editor({ content, onChange, placeholder = 'Write somethi
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Image.configure({ HTMLAttributes: { class: 'rounded-lg max-w-full' } }),
+      ScreenplayBlock,
+      VideoEmbedNode,
+      ImageGridNode,
+      Table.configure({ resizable: true }),
+      TableRow,
+      TableHeader,
+      TableCell,
+      Image.configure({ HTMLAttributes: { class: 'rounded-lg max-w-full h-auto block' }, inline: false }),
       Link.configure({
         openOnClick: false,
         HTMLAttributes: { class: 'text-violet-400 underline' },
@@ -85,12 +100,18 @@ export default function Editor({ content, onChange, placeholder = 'Write somethi
     if (url) editor.chain().focus().setImage({ src: url }).run()
   }, [editor])
 
+  // Reactively check if cursor is inside a table — updates on every selection change
+  const isInTable = useEditorState({
+    editor,
+    selector: ({ editor: e }) => e?.can().deleteTable() ?? false,
+  })
+
   if (!editor) return null
 
   return (
-    <div className="border border-zinc-700 rounded-xl overflow-hidden bg-zinc-900">
-      {/* Toolbar */}
-      <div className="flex flex-wrap gap-0.5 p-2 border-b border-zinc-700 bg-zinc-800/50">
+    <div className="border border-zinc-700 rounded-xl bg-zinc-900">
+      {/* Toolbar — sticky within the admin scroll area */}
+      <div className="flex flex-wrap gap-0.5 p-2 border-b border-zinc-700 bg-zinc-800 rounded-t-xl">
         <ToolbarButton onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive('bold')} title="Bold">
           <Bold size={15} />
         </ToolbarButton>
@@ -148,10 +169,52 @@ export default function Editor({ content, onChange, placeholder = 'Write somethi
         <ToolbarButton onClick={() => editor.chain().focus().redo().run()} active={false} title="Redo">
           <Redo size={15} />
         </ToolbarButton>
+
+        <div className="w-px bg-zinc-700 mx-1 self-stretch" />
+
+        <ToolbarButton
+          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+          active={false} title="Insert table">
+          <TableIcon size={15} />
+        </ToolbarButton>
+        <div className="w-px bg-zinc-700 mx-1 self-stretch" />
+        <span className="text-[10px] text-zinc-600 self-center px-1 uppercase tracking-wide">Table:</span>
+        <ToolbarButton onClick={() => editor.chain().focus().addRowAfter().run()} active={false} title="Add row below">
+          <RowsIcon size={15} />
+        </ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().deleteRow().run()} active={false} title="Delete current row">
+          <Trash2 size={12} className="rotate-90" />
+        </ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().addColumnAfter().run()} active={false} title="Add column right">
+          <Columns3 size={15} />
+        </ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().deleteColumn().run()} active={false} title="Delete current column">
+          <Trash2 size={12} />
+        </ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().deleteTable().run()} active={false} title="Delete entire table">
+          <Trash2 size={15} />
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => editor.chain().focus().insertContent({ type: 'screenplayBlock', attrs: { lines: [{ id: Date.now().toString(), type: 'scene', text: '' }] } }).run()}
+          active={false} title="Insert screenplay block">
+          <Clapperboard size={15} />
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => editor.chain().focus().insertContent({ type: 'videoEmbed', attrs: { src: '' } }).run()}
+          active={false} title="Insert video embed">
+          <Film size={15} />
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => editor.chain().focus().insertContent({ type: 'imageGrid', attrs: { srcs: [], cols: 2 } }).run()}
+          active={false} title="Insert image grid">
+          <Images size={15} />
+        </ToolbarButton>
       </div>
 
-      {/* Editor content */}
-      <EditorContent editor={editor} />
+      {/* Editor content — scrolls internally so toolbar stays visible */}
+      <div style={{ minHeight: '400px', maxHeight: '70vh', overflowY: 'auto' }}>
+        <EditorContent editor={editor} />
+      </div>
     </div>
   )
 }

@@ -19,16 +19,16 @@ export default async function BlogPage() {
   return (
     <div>
       <div className="mb-12">
-        <h1 className="text-4xl font-bold mb-3">Blog</h1>
-        <p className="text-zinc-400">Thoughts, ideas, and things I'm figuring out.</p>
+        <h1 className="text-5xl text-white mb-3" style={{ fontFamily: 'Peralta, serif' }}>Blog</h1>
+        <p className="text-white/50">Thoughts, ideas, and things I'm figuring out.</p>
       </div>
 
       {categories.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-10">
-          <Link href="/blog" className="px-3 py-1 rounded-full text-sm bg-violet-600 text-white font-medium">All</Link>
+          <Link href="/blog" className="px-3 py-1 rounded-full text-sm bg-[#FACD40] text-black font-medium">All</Link>
           {categories.map(cat => (
             <Link key={cat.id} href={`/blog?category=${cat.slug}`}
-              className="px-3 py-1 rounded-full text-sm border border-zinc-800 text-zinc-400 hover:border-violet-500 hover:text-white transition-colors">
+              className="px-3 py-1 rounded-full text-sm border border-white/15 text-white/50 hover:border-white/40 hover:text-white transition-colors">
               {cat.name}
             </Link>
           ))}
@@ -36,13 +36,13 @@ export default async function BlogPage() {
       )}
 
       {!posts.length ? (
-        <p className="text-zinc-500 text-center py-20">Nothing published yet. Check back soon.</p>
+        <p className="text-white/40 text-center py-20">Nothing published yet. Check back soon.</p>
       ) : (
         <div className="space-y-10">
           {posts.map(post => (
             <article key={post.id} className="flex gap-8 group">
               {post.cover_image_url && (
-                <Link href={`/blog/${post.slug}`} className="shrink-0 w-48 aspect-video relative rounded-xl overflow-hidden bg-zinc-900">
+                <Link href={`/blog/${post.slug}`} className="shrink-0 w-48 aspect-video relative rounded-xl overflow-hidden bg-white/5">
                   <Image src={post.cover_image_url} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                 </Link>
               )}
@@ -53,10 +53,11 @@ export default async function BlogPage() {
                   </span>
                 )}
                 <Link href={`/blog/${post.slug}`}>
-                  <h2 className="text-xl font-bold mb-2 group-hover:text-violet-400 transition-colors leading-snug">{post.title}</h2>
+                  <h2 className="text-xl text-white mb-2 group-hover:text-white/60 transition-colors leading-snug"
+                    style={{ fontFamily: 'Peralta, serif' }}>{post.title}</h2>
                 </Link>
-                {post.excerpt && <p className="text-zinc-400 leading-relaxed line-clamp-2">{post.excerpt}</p>}
-                <p className="text-zinc-600 text-sm mt-3">
+                {post.excerpt && <p className="text-white/50 leading-relaxed line-clamp-2">{post.excerpt}</p>}
+                <p className="text-white/25 text-sm mt-3">
                   {post.published_at ? formatDistanceToNow(new Date(post.published_at), { addSuffix: true }) : ''}
                 </p>
               </div>

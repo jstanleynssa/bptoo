@@ -2,30 +2,122 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --color-violet-50: #f5f3ff;
-  --color-violet-100: #ede9fe;
-  --color-violet-200: #ddd6fe;
-  --color-violet-300: #c4b5fd;
+  /* Brand yellow */
+  --color-brand-yellow: #FACD40;
+  --color-brand-yellow-dark: #E8B820;
+  --color-brand-yellow-light: #FCD95A;
+
+  /* Core */
+  --color-brand-black: #0A0A0A;
+  --color-brand-white: #FAFAF7;
+
+  /* Zinc palette (admin) */
+  --color-zinc-50: #fafafa;
+  --color-zinc-100: #f4f4f5;
+  --color-zinc-200: #e4e4e7;
+  --color-zinc-300: #d4d4d8;
+  --color-zinc-400: #a1a1aa;
+  --color-zinc-500: #71717a;
+  --color-zinc-600: #52525b;
+  --color-zinc-700: #3f3f46;
+  --color-zinc-800: #27272a;
+  --color-zinc-900: #18181b;
+  --color-zinc-950: #09090b;
+
+  /* Violet (admin accents) */
   --color-violet-400: #a78bfa;
   --color-violet-500: #8b5cf6;
   --color-violet-600: #7c3aed;
-  --color-violet-700: #6d28d9;
-  --color-violet-800: #5b21b6;
-  --color-violet-900: #4c1d95;
+
+  /* Fonts */
+  --font-peralta: "Peralta", serif;
+  --font-sans: "Inter", system-ui, sans-serif;
 }
 
 @layer base {
-  * {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
   body {
-    background-color: #09090b;
-    color: #fafafa;
+    background-color: #FACD40;
   }
+}
+
+/* Inline images — natural dimensions, never cropped */
+.prose img {
+  max-width: 100% !important;
+  height: auto !important;
+  object-fit: unset !important;
+}
+
+/* Tiptap table — editor */
+.ProseMirror table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.5rem 0;
+  table-layout: fixed;
+}
+.ProseMirror table th,
+.ProseMirror table td {
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+  min-width: 80px;
+  position: relative;
+  background: transparent;
+}
+.ProseMirror table th {
+  background: rgba(255,255,255,0.08);
+  font-weight: 600;
+}
+.ProseMirror .selectedCell {
+  background: rgba(139,92,246,0.15) !important;
+}
+.ProseMirror .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #7c3aed;
+  cursor: col-resize;
+  pointer-events: auto;
+  z-index: 10;
+}
+
+/* Public page tables — dark background */
+.prose table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.5rem 0;
+}
+.prose table th,
+.prose table td {
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 0.6rem 0.9rem;
+  text-align: left;
+  vertical-align: top;
+}
+.prose table th {
+  background: rgba(255,255,255,0.08);
+  font-weight: 600;
+}
+
+/* Prose heading spacing */
+.prose h2 {
+  margin-top: 3rem !important;
+  margin-bottom: 1rem !important;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0,0,0,0.08);
+}
+.prose h3 {
+  margin-top: 2.25rem !important;
+  margin-bottom: 0.75rem !important;
 }
 
 /* Tiptap placeholder */

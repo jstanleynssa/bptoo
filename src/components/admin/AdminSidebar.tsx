@@ -9,6 +9,9 @@ import {
   Folder,
   Image,
   Tag,
+  Library,
+  Activity,
+  MessageSquare,
   Globe,
   LogOut,
 } from 'lucide-react'
@@ -19,6 +22,9 @@ const nav = [
   { href: '/admin/projects', label: 'Projects', icon: Folder },
   { href: '/admin/artwork', label: 'Artwork', icon: Image },
   { href: '/admin/categories', label: 'Categories', icon: Tag },
+  { href: '/admin/media', label: 'Media', icon: Library },
+  { href: '/admin/mood', label: 'Mood', icon: Activity },
+  { href: '/admin/comments', label: 'Comments', icon: MessageSquare },
 ]
 
 export default function AdminSidebar() {
