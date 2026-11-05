@@ -47,12 +47,12 @@ export default async function HomePage() {
       <SiteNav />
 
       {/* Space so brain clears the sticky nav */}
-      <div style={{ height: '72px' }} />
+      <div className="hidden md:block" style={{ height: '72px' }} />
 
-      {/* ── Illustration + bracketing blocks ── */}
+      {/* ── Desktop: Illustration + bracketing blocks ── */}
       <div
         data-reveal-container
-        className="relative mx-auto"
+        className="relative mx-auto hidden md:block"
         style={{ height: `${SVG_H}px`, maxWidth: '960px' }}
       >
         <RevealSVG />
@@ -165,9 +165,92 @@ export default async function HomePage() {
         </LineRevealBlock>
       </div>
 
-      {/* Connector */}
-      <div className="mx-auto flex justify-center">
+      {/* Connector - desktop only */}
+      <div className="hidden md:flex mx-auto justify-center">
         <div className="w-px bg-black/20" style={{ height: '60px' }} />
+      </div>
+
+
+      {/* ── Mobile layout ── */}
+      <div className="md:hidden px-6 pb-16 space-y-12">
+
+        {/* Brain illustration */}
+        <div className="flex justify-center pt-8 pb-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/hero.svg" alt="bptoo" style={{ width: '220px', height: 'auto', clipPath: 'inset(0 0 90.3% 0)' }} />
+        </div>
+
+        {/* Block 1 */}
+        <div className="border-t border-black/10 pt-10">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/jason-stanley-ink.png"
+            alt="Jason Stanley" className="w-32 mb-5" style={{ mixBlendMode: 'multiply' }} />
+          <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-2">Introduction</p>
+          <h2 className="text-2xl text-black mb-4" style={{ fontFamily: 'Peralta, serif' }}>Nice to meet ya.</h2>
+          <p className="text-sm text-black/65 leading-relaxed mb-3">
+            Hey — I'm Jason. I'm a husband and dad. I'm also an entrepreneur, builder,
+            marketer, writer, and creative based in North Carolina. If I had to narrow
+            that down to one word I would call myself a designer.
+          </p>
+          <p className="text-sm text-black/65 leading-relaxed">
+            I have Bipolar II, and I've spent a long time going from ashamed of that to
+            feeling like I should be proud of how it shapes the way I think and make things.
+          </p>
+        </div>
+
+        {/* Block 2 */}
+        <div className="border-t border-black/10 pt-10">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/waves-ink.png"
+            alt="Wave frequency" className="w-full mb-5" style={{ mixBlendMode: 'multiply' }} />
+          <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-2">The thing itself</p>
+          <h2 className="text-2xl text-black mb-4" style={{ fontFamily: 'Peralta, serif' }}>What exactly is Bipolar II?</h2>
+          <p className="text-sm text-black/65 leading-relaxed">
+            Bipolar II means recurring depression and at least one hypomanic episode — elevated
+            mood that's real and intense, but short of full mania. The same wiring that makes
+            the lows hard makes the highs remarkably generative. I may make connections others
+            miss. I get genuinely obsessed with ideas.
+          </p>
+        </div>
+
+        {/* Block 3 */}
+        <div className="border-t border-black/10 pt-10">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/tree-ink.png"
+            alt="Tree" className="w-32 mb-5" style={{ mixBlendMode: 'multiply' }} />
+          <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-2">Creative life</p>
+          <h2 className="text-2xl text-black mb-4" style={{ fontFamily: 'Peralta, serif' }}>What I direct my creativity towards.</h2>
+          <p className="text-sm text-black/65 leading-relaxed">
+            All directions — projects for my kids and family, coaching, leading Scouts,
+            running a business. I read, write, draw, work in Photoshop, make videos,
+            and follow my brain down rabbit holes. This site is where a lot of that ends up.
+          </p>
+        </div>
+
+        {/* Latest post */}
+        {latestPost && (
+          <div className="border-t border-black/10 pt-10">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-4">Latest post</p>
+            <Link href={`/blog/${latestPost.slug}`} className="group block">
+              {latestPost.cover_image_url && (
+                <div className="relative aspect-video rounded-xl overflow-hidden mb-3 bg-black/10">
+                  <Image src={latestPost.cover_image_url} alt={latestPost.title} fill className="object-cover" />
+                </div>
+              )}
+              <h2 className="text-xl text-black mb-2 group-hover:text-black/60 transition-colors" style={{ fontFamily: 'Peralta, serif' }}>
+                {latestPost.title}
+              </h2>
+              {latestPost.excerpt && <p className="text-sm text-black/60 leading-relaxed line-clamp-2">{latestPost.excerpt}</p>}
+              <span className="inline-flex items-center gap-1 text-xs text-black/40 mt-3">Read it <ArrowRight size={12} /></span>
+            </Link>
+          </div>
+        )}
+
+        {/* Man at bottom */}
+        <div className="flex justify-center pt-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/man.svg" alt="A person" style={{ width: '120px', height: 'auto', mixBlendMode: 'multiply' }} />
+        </div>
       </div>
 
       <div className="relative max-w-5xl mx-auto px-6">

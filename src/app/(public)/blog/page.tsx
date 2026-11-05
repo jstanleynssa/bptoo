@@ -40,9 +40,9 @@ export default async function BlogPage() {
       ) : (
         <div className="space-y-10">
           {posts.map(post => (
-            <article key={post.id} className="flex gap-8 group">
+            <article key={post.id} className="flex flex-col sm:flex-row gap-5 sm:gap-8 group">
               {post.cover_image_url && (
-                <Link href={`/blog/${post.slug}`} className="shrink-0 w-48 aspect-video relative rounded-xl overflow-hidden bg-white/5">
+                <Link href={`/blog/${post.slug}`} className="shrink-0 w-full sm:w-48 aspect-video relative rounded-xl overflow-hidden bg-white/5">
                   <Image src={post.cover_image_url} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                 </Link>
               )}
