@@ -32,14 +32,13 @@ export default async function HomePage() {
     supabase.from('posts').select('id, title, slug, excerpt, cover_image_url, published_at, categories(name, color)')
       .eq('status', 'published').order('published_at', { ascending: false }).limit(3),
     supabase.from('projects').select('id, title, slug, description, cover_image_url, url')
-      .eq('status', 'published').eq('featured', true).order('sort_order').limit(4),
+      .eq('status', 'published').eq('featured', true).order('sort_order').limit(2),
   ])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recentPosts = (postsData ?? []) as any as PostRow[]
   const featuredProjects = (projectsData ?? []) as Project[]
   const latestPost = recentPosts[0]
-  const latestProject = featuredProjects[0]
 
   return (
     <div style={{ backgroundColor: '#FACD40', minHeight: '100vh' }}>
@@ -130,52 +129,29 @@ export default async function HomePage() {
         {/* Block 4 — right */}
         <LineRevealBlock blockY={BLOCK_Y[3]} side={SIDES[3]}
           style={{ position: 'absolute', top: `${BLOCK_Y[3]}px`, transform: 'translateY(-50%)', width: `${BLOCK_W}px`, left: `calc(50% + ${SVG_W / 2 + GAP}px)` }}>
-          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/35 mb-3">
-            {latestPost ? 'Latest post' : latestProject ? 'Latest project' : 'Explore'}
-          </p>
-          {latestPost ? (
-            <Link href={`/blog/${latestPost.slug}`} className="group block">
-              {latestPost.cover_image_url && (
-                <div className="relative aspect-video rounded-lg overflow-hidden mb-3 bg-black/10">
-                  <Image src={latestPost.cover_image_url} alt={latestPost.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                </div>
-              )}
-              {latestPost.categories && (
-                <span className="text-[10px] font-bold uppercase tracking-widest block mb-2" style={{ color: latestPost.categories.color }}>
-                  {latestPost.categories.name}
-                </span>
-              )}
-              <h2 className="text-xl text-black mb-2 leading-snug group-hover:text-black/60 transition-colors" style={{ fontFamily: 'Peralta, serif' }}>
-                {latestPost.title}
-              </h2>
-              {latestPost.excerpt && <p className="text-sm text-black/60 leading-relaxed line-clamp-3">{latestPost.excerpt}</p>}
-              <span className="inline-flex items-center gap-1 text-xs text-black/40 hover:text-black mt-3 transition-colors">
-                Read it <ArrowRight size={12} />
-              </span>
-            </Link>
-          ) : latestProject ? (
-            <Link href={`/projects/${latestProject.slug}`} className="group block">
-              {latestProject.cover_image_url && (
-                <div className="relative aspect-video rounded-lg overflow-hidden mb-3 bg-black/10">
-                  <Image src={latestProject.cover_image_url} alt={latestProject.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                </div>
-              )}
-              <h2 className="text-xl text-black mb-2 leading-snug group-hover:text-black/60 transition-colors" style={{ fontFamily: 'Peralta, serif' }}>
-                {latestProject.title}
-              </h2>
-              {latestProject.description && <p className="text-sm text-black/60 leading-relaxed line-clamp-3">{latestProject.description}</p>}
-              <span className="inline-flex items-center gap-1 text-xs text-black/40 hover:text-black mt-3 transition-colors">
-                See the project <ArrowRight size={12} />
-              </span>
-            </Link>
-          ) : (
-            <div className="space-y-3">
-              {[{ href: '/blog', label: 'Read the blog' }, { href: '/projects', label: 'See projects' }, { href: '/artwork', label: 'Browse artwork' }].map(({ href, label }) => (
-                <Link key={href} href={href} className="flex items-center gap-2 text-sm text-black/60 hover:text-black transition-colors">
-                  <ArrowRight size={13} /> {label}
+          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/35 mb-4">Projects</p>
+          {featuredProjects.length > 0 ? (
+            <div className="space-y-5">
+              {featuredProjects.map(p => (
+                <Link key={p.id} href={`/projects/${p.slug}`} className="group block">
+                  {p.cover_image_url && (
+                    <div className="relative aspect-video rounded-lg overflow-hidden mb-2 bg-black/10">
+                      <Image src={p.cover_image_url} alt={p.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                    </div>
+                  )}
+                  <h2 className="text-lg text-black mb-1 leading-snug group-hover:text-black/60 transition-colors"
+                    style={{ fontFamily: 'Peralta, serif' }}>{p.title}</h2>
+                  {p.description && <p className="text-xs text-black/55 leading-relaxed line-clamp-2">{p.description}</p>}
                 </Link>
               ))}
+              <Link href="/projects" className="inline-flex items-center gap-1 text-xs text-black/40 hover:text-black transition-colors mt-1">
+                All projects <ArrowRight size={12} />
+              </Link>
             </div>
+          ) : (
+            <Link href="/projects" className="flex items-center gap-2 text-sm text-black/60 hover:text-black transition-colors">
+              <ArrowRight size={13} /> See projects
+            </Link>
           )}
         </LineRevealBlock>
       </div>
