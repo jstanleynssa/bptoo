@@ -11,12 +11,12 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
           </Link>
           <nav className="flex items-center gap-8">
             {[
-              { href: '/blog', label: 'Blog' },
+              { href: '/about', label: 'About' },
+          { href: '/blog', label: 'Blog' },
               { href: '/projects', label: 'Projects' },
               { href: '/artwork', label: 'Artwork' },
               { href: '/mood', label: 'The Wave' },
-              { href: '/about', label: 'About' },
-            ].map(({ href, label }) => (
+                          ].map(({ href, label }) => (
               <Link key={href} href={href}
                 className="text-sm text-white/50 hover:text-white transition-colors">
                 {label}

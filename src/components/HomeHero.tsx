@@ -11,12 +11,12 @@ export default function SiteNav() {
       </span>
       <div className="flex items-center gap-8">
         {[
+          { href: '/about', label: 'About' },
           { href: '/blog', label: 'Blog' },
           { href: '/projects', label: 'Projects' },
           { href: '/artwork', label: 'Artwork' },
           { href: '/mood', label: 'The Wave' },
-          { href: '/about', label: 'About' },
-        ].map(({ href, label }) => (
+                  ].map(({ href, label }) => (
           <Link
             key={href}
             href={href}
