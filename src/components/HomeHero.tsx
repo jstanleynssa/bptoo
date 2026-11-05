@@ -14,6 +14,7 @@ export default function SiteNav() {
           { href: '/blog', label: 'Blog' },
           { href: '/projects', label: 'Projects' },
           { href: '/artwork', label: 'Artwork' },
+          { href: '/mood', label: 'The Wave' },
           { href: '/about', label: 'About' },
         ].map(({ href, label }) => (
           <Link
