@@ -10,8 +10,8 @@ const HERO_H = Math.round(HERO_W * 2623.72 / 229.12)  // ≈ 3207px
 // BRAIN_PCT: shows brain + wordmark + line stub from 't' — that's fine
 const BRAIN_PCT = 0.10
 
-// Clip stops here — just before the hero.svg person appears
-const CLIP_END_PCT = 0.855
+// Clip at the exact natural point where the string tapers to its tip
+const CLIP_END_PCT = 0.859
 
 // How many px to scroll past the 't' before the line starts growing
 // (gives the brain+wordmark time to settle, then line emerges)
@@ -64,7 +64,8 @@ export default function RevealSVG() {
     }
   }, [])
 
-  const manTop = Math.round(HERO_H * CLIP_END_PCT) + 30
+  // Slight overlap so the string's pointed tip meets the top of man's head
+  const manTop = Math.round(HERO_H * CLIP_END_PCT) - 10
 
   return (
     <div
