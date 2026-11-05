@@ -174,17 +174,19 @@ export default async function HomePage() {
       {/* ── Mobile layout ── */}
       <div className="md:hidden px-6 pb-16 space-y-12">
 
-        {/* Brain illustration */}
+        {/* Brain illustration — fixed-height container prevents the full SVG height from reserving space */}
         <div className="flex justify-center pt-8 pb-4">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/hero.svg" alt="bptoo" style={{ width: '220px', height: 'auto', clipPath: 'inset(0 0 90.3% 0)' }} />
+          <div style={{ width: '220px', height: '250px', overflow: 'hidden' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/hero.svg" alt="bptoo" style={{ width: '220px', height: 'auto' }} />
+          </div>
         </div>
 
         {/* Block 1 */}
         <div className="border-t border-black/10 pt-10">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/jason-stanley-ink.png"
-            alt="Jason Stanley" className="w-32 mb-5" style={{ mixBlendMode: 'multiply' }} />
+            alt="Jason Stanley" className="w-full max-w-[200px] mb-5" style={{ mixBlendMode: 'multiply' }} />
           <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-2">Introduction</p>
           <h2 className="text-2xl text-black mb-4" style={{ fontFamily: 'Peralta, serif' }}>Nice to meet ya.</h2>
           <p className="text-sm text-black/65 leading-relaxed mb-3">
@@ -217,7 +219,7 @@ export default async function HomePage() {
         <div className="border-t border-black/10 pt-10">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/tree-ink.png"
-            alt="Tree" className="w-32 mb-5" style={{ mixBlendMode: 'multiply' }} />
+            alt="Tree" className="w-full max-w-[200px] mb-5" style={{ mixBlendMode: 'multiply' }} />
           <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-2">Creative life</p>
           <h2 className="text-2xl text-black mb-4" style={{ fontFamily: 'Peralta, serif' }}>What I direct my creativity towards.</h2>
           <p className="text-sm text-black/65 leading-relaxed">
