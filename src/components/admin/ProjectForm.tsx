@@ -123,7 +123,8 @@ export default function ProjectForm({ project }: { project?: Project }) {
           )}
           <button type="button" onClick={() => save('draft')} disabled={saving}
             className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-sm transition-colors disabled:opacity-50">
-            {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Save draft
+            {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+            {status === 'published' ? 'Unpublish' : 'Save draft'}
           </button>
           <button type="button" onClick={() => save('published')} disabled={saving}
             className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-500 rounded-lg text-sm font-medium transition-colors disabled:opacity-50">
