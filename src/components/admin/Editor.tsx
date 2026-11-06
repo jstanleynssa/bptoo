@@ -112,110 +112,48 @@ export default function Editor({ content, onChange, placeholder = 'Write somethi
 
   return (
     <div className="border border-zinc-700 rounded-xl bg-zinc-900">
-      {/* Toolbar — sticky within the admin scroll area */}
+      {/* Row 1 — text formatting */}
       <div className="flex flex-wrap gap-0.5 p-2 border-b border-zinc-700 bg-zinc-800 rounded-t-xl">
-        <ToolbarButton onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive('bold')} title="Bold">
-          <Bold size={15} />
-        </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive('italic')} title="Italic">
-          <Italic size={15} />
-        </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().toggleStrike().run()} active={editor.isActive('strike')} title="Strikethrough">
-          <Strikethrough size={15} />
-        </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().toggleCode().run()} active={editor.isActive('code')} title="Inline code">
-          <Code size={15} />
-        </ToolbarButton>
-
+        <ToolbarButton onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive('bold')} title="Bold"><Bold size={15} /></ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive('italic')} title="Italic"><Italic size={15} /></ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().toggleStrike().run()} active={editor.isActive('strike')} title="Strikethrough"><Strikethrough size={15} /></ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().toggleCode().run()} active={editor.isActive('code')} title="Inline code"><Code size={15} /></ToolbarButton>
         <div className="w-px bg-zinc-700 mx-1 self-stretch" />
-
-        <ToolbarButton onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} active={editor.isActive('heading', { level: 2 })} title="Heading 2">
-          <Heading2 size={15} />
-        </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} active={editor.isActive('heading', { level: 3 })} title="Heading 3">
-          <Heading3 size={15} />
-        </ToolbarButton>
-
+        <ToolbarButton onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} active={editor.isActive('heading', { level: 2 })} title="Heading 2"><Heading2 size={15} /></ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} active={editor.isActive('heading', { level: 3 })} title="Heading 3"><Heading3 size={15} /></ToolbarButton>
         <div className="w-px bg-zinc-700 mx-1 self-stretch" />
-
-        <ToolbarButton onClick={() => editor.chain().focus().toggleBulletList().run()} active={editor.isActive('bulletList')} title="Bullet list">
-          <List size={15} />
-        </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().toggleOrderedList().run()} active={editor.isActive('orderedList')} title="Ordered list">
-          <ListOrdered size={15} />
-        </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().toggleBlockquote().run()} active={editor.isActive('blockquote')} title="Blockquote">
-          <Quote size={15} />
-        </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().toggleCodeBlock().run()} active={editor.isActive('codeBlock')} title="Code block">
-          <Code2 size={15} />
-        </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().setHorizontalRule().run()} active={false} title="Divider">
-          <Minus size={15} />
-        </ToolbarButton>
-
+        <ToolbarButton onClick={() => editor.chain().focus().toggleBulletList().run()} active={editor.isActive('bulletList')} title="Bullet list"><List size={15} /></ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().toggleOrderedList().run()} active={editor.isActive('orderedList')} title="Ordered list"><ListOrdered size={15} /></ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().toggleBlockquote().run()} active={editor.isActive('blockquote')} title="Blockquote"><Quote size={15} /></ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().toggleCodeBlock().run()} active={editor.isActive('codeBlock')} title="Code block"><Code2 size={15} /></ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().setHorizontalRule().run()} active={false} title="Divider"><Minus size={15} /></ToolbarButton>
         <div className="w-px bg-zinc-700 mx-1 self-stretch" />
-
-        <ToolbarButton onClick={setLink} active={editor.isActive('link')} title="Link">
-          <LinkIcon size={15} />
-        </ToolbarButton>
-        <ToolbarButton onClick={addImage} active={false} title="Image">
-          <ImageIcon size={15} />
-        </ToolbarButton>
-
+        <ToolbarButton onClick={setLink} active={editor.isActive('link')} title="Link"><LinkIcon size={15} /></ToolbarButton>
+        <ToolbarButton onClick={addImage} active={false} title="Inline image (no caption)"><ImageIcon size={15} /></ToolbarButton>
         <div className="w-px bg-zinc-700 mx-1 self-stretch" />
+        <ToolbarButton onClick={() => editor.chain().focus().undo().run()} active={false} title="Undo"><Undo size={15} /></ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().redo().run()} active={false} title="Redo"><Redo size={15} /></ToolbarButton>
+      </div>
 
-        <ToolbarButton onClick={() => editor.chain().focus().undo().run()} active={false} title="Undo">
-          <Undo size={15} />
-        </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().redo().run()} active={false} title="Redo">
-          <Redo size={15} />
-        </ToolbarButton>
-
-        <div className="w-px bg-zinc-700 mx-1 self-stretch" />
-
-        <ToolbarButton
-          onClick={() => editor.chain().focus().insertContent({ type: 'figure', attrs: { src: '', caption: '' } }).run()}
-          active={false} title="Image with caption">
-          <ImagePlus size={15} />
-        </ToolbarButton>
-        <ToolbarButton
-          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
-          active={false} title="Insert table">
-          <TableIcon size={15} />
-        </ToolbarButton>
-        <div className="w-px bg-zinc-700 mx-1 self-stretch" />
-        <span className="text-[10px] text-zinc-600 self-center px-1 uppercase tracking-wide">Table:</span>
-        <ToolbarButton onClick={() => editor.chain().focus().addRowAfter().run()} active={false} title="Add row below">
-          <RowsIcon size={15} />
-        </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().deleteRow().run()} active={false} title="Delete current row">
-          <Trash2 size={12} className="rotate-90" />
-        </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().addColumnAfter().run()} active={false} title="Add column right">
-          <Columns3 size={15} />
-        </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().deleteColumn().run()} active={false} title="Delete current column">
-          <Trash2 size={12} />
-        </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().deleteTable().run()} active={false} title="Delete entire table">
-          <Trash2 size={15} />
-        </ToolbarButton>
-        <ToolbarButton
-          onClick={() => editor.chain().focus().insertContent({ type: 'screenplayBlock', attrs: { lines: [{ id: Date.now().toString(), type: 'scene', text: '' }] } }).run()}
-          active={false} title="Insert screenplay block">
-          <Clapperboard size={15} />
-        </ToolbarButton>
-        <ToolbarButton
-          onClick={() => editor.chain().focus().insertContent({ type: 'videoEmbed', attrs: { src: '' } }).run()}
-          active={false} title="Insert video embed">
-          <Film size={15} />
-        </ToolbarButton>
-        <ToolbarButton
-          onClick={() => editor.chain().focus().insertContent({ type: 'imageGrid', attrs: { srcs: [], cols: 2 } }).run()}
-          active={false} title="Insert image grid">
-          <Images size={15} />
-        </ToolbarButton>
+      {/* Row 2 — insert blocks */}
+      <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 border-b border-zinc-700 bg-zinc-900">
+        <span className="text-[10px] text-zinc-600 uppercase tracking-wide mr-1">Insert:</span>
+        <ToolbarButton onClick={() => editor.chain().focus().insertContent({ type: 'figure', attrs: { src: '', caption: '' } }).run()} active={false} title="Image with caption"><ImagePlus size={15} /></ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().insertContent({ type: 'imageGrid', attrs: { srcs: [], cols: 2 } }).run()} active={false} title="Image grid"><Images size={15} /></ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().insertContent({ type: 'videoEmbed', attrs: { src: '' } }).run()} active={false} title="Video embed"><Film size={15} /></ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().insertContent({ type: 'screenplayBlock', attrs: { lines: [{ id: Date.now().toString(), type: 'scene', text: '' }] } }).run()} active={false} title="Screenplay block"><Clapperboard size={15} /></ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} active={false} title="Table"><TableIcon size={15} /></ToolbarButton>
+        {isInTable && (
+          <>
+            <div className="w-px bg-zinc-700 mx-1 self-stretch" />
+            <span className="text-[10px] text-zinc-600 uppercase tracking-wide mr-0.5">Table:</span>
+            <ToolbarButton onClick={() => editor.chain().focus().addRowAfter().run()} active={false} title="Add row"><RowsIcon size={15} /></ToolbarButton>
+            <ToolbarButton onClick={() => editor.chain().focus().deleteRow().run()} active={false} title="Delete row"><Trash2 size={12} className="rotate-90" /></ToolbarButton>
+            <ToolbarButton onClick={() => editor.chain().focus().addColumnAfter().run()} active={false} title="Add column"><Columns3 size={15} /></ToolbarButton>
+            <ToolbarButton onClick={() => editor.chain().focus().deleteColumn().run()} active={false} title="Delete column"><Trash2 size={12} /></ToolbarButton>
+            <ToolbarButton onClick={() => editor.chain().focus().deleteTable().run()} active={false} title="Delete table"><Trash2 size={15} /></ToolbarButton>
+          </>
+        )}
       </div>
 
       {/* Editor content — scrolls internally so toolbar stays visible */}
