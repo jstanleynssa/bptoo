@@ -66,12 +66,13 @@ function VideoRenderer({ src }: { src: string }) {
 
 // ── Image grid renderer ──────────────────────────────────────────────────────
 
-function ImageGridRenderer({ srcs, cols, onImageClick }: { srcs: string[]; cols: number; onImageClick: (src: string) => void }) {
+function ImageGridRenderer({ srcs, cols, ratio, onImageClick }: { srcs: string[]; cols: number; ratio?: string; onImageClick: (src: string, all: string[]) => void }) {
   if (!srcs.length) return null
+  const ratioClass = ratio === 'sq' ? 'aspect-square' : ratio === 'vid' ? 'aspect-video' : ratio === 'port' ? 'aspect-[3/4]' : ''
   return (
     <div className="my-8 not-prose" style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: '8px' }}>
       {srcs.map((src, i) => (
-        <button key={i} onClick={() => onImageClick(src)} className="relative aspect-video rounded-xl overflow-hidden bg-black/5 cursor-zoom-in group">
+        <button key={i} onClick={() => onImageClick(src, srcs)} className={`relative rounded-xl overflow-hidden bg-black/5 cursor-zoom-in group ${ratioClass}`}>
           <Image src={src} alt="" fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="400px" />
         </button>
       ))}
@@ -87,7 +88,7 @@ interface ContentRendererProps {
 }
 
 export default function ContentRenderer({ html, className }: ContentRendererProps) {
-  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null)
+  const [lightbox, setLightbox] = useState<{ src: string; srcs: string[] } | null>(null)
 
   const options: HTMLReactParserOptions = {
     replace(domNode) {
@@ -106,13 +107,14 @@ export default function ContentRenderer({ html, className }: ContentRendererProp
               src={src}
               alt={caption}
               className="w-full h-auto rounded-xl cursor-zoom-in hover:opacity-90 transition-opacity"
-              onClick={() => setLightboxSrc(src)}
+              onClick={() => setLightbox({ src, srcs: [src] })}
               style={{ display: 'block', cursor: 'zoom-in' }}
             />
             {caption && (
               <figcaption className="mt-2 text-center text-sm italic opacity-50">
                 {(() => {
-                  const captionLinkEl = domNode.children?.find((c): c is Element => c instanceof Element && c.name === 'figcaption')?.children?.find((c): c is Element => c instanceof Element && c.name === 'a')
+                  const figEl = domNode.children?.find((c): c is Element => c instanceof Element && c.name === 'figcaption')
+                  const captionLinkEl = figEl?.children?.find((c): c is Element => c instanceof Element && c.name === 'a')
                   const href = captionLinkEl?.attribs?.href
                   return href
                     ? <a href={href} target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80 transition-opacity">{caption}</a>
@@ -132,7 +134,7 @@ export default function ContentRenderer({ html, className }: ContentRendererProp
             src={src}
             alt={alt ?? ''}
             className={`${cls ?? ''} cursor-zoom-in hover:opacity-90 transition-opacity`}
-            onClick={() => setLightboxSrc(src)}
+            onClick={() => setLightbox({ src, srcs: [src] })}
             style={{ cursor: 'zoom-in' }}
           />
         )
@@ -159,7 +161,8 @@ export default function ContentRenderer({ html, className }: ContentRendererProp
         const cols = parseInt(domNode.attribs['data-cols'] ?? '2')
         try {
           const srcs: string[] = JSON.parse(srcsRaw)
-          return <ImageGridRenderer srcs={srcs} cols={cols} onImageClick={setLightboxSrc} />
+          const ratio = domNode.attribs['data-ratio'] ?? 'sq'
+          return <ImageGridRenderer srcs={srcs} cols={cols} ratio={ratio} onImageClick={(src, all) => setLightbox({ src, srcs: all })} />
         } catch { return <></> }
       }
     },
@@ -171,10 +174,12 @@ export default function ContentRenderer({ html, className }: ContentRendererProp
         {parse(html, options)}
       </div>
 
-      {lightboxSrc && (
+      {lightbox && (
         <Lightbox
-          src={lightboxSrc}
-          onClose={() => setLightboxSrc(null)}
+          src={lightbox.src}
+          srcs={lightbox.srcs}
+          onClose={() => setLightbox(null)}
+          onNavigate={src => setLightbox(l => l ? { ...l, src } : null)}
         />
       )}
     </>

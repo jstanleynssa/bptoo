@@ -19,6 +19,7 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
   })()
   const rawCols = node.attrs.cols
   const cols = typeof rawCols === 'string' ? parseInt(rawCols) || 2 : (rawCols as number) ?? 2
+  const ratio = (node.attrs.ratio as string) ?? 'square'
 
   function addImages(urls: string[]) {
     updateAttributes({ srcs: [...srcs, ...urls] })
@@ -41,6 +42,15 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
             <Images size={12} /> Image Grid
           </div>
           <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 text-xs text-zinc-400 mr-3">
+              Ratio:
+              {[['sq','Square'],['vid','Video'],['port','Portrait'],['free','Natural']].map(([v, l]) => (
+                <button key={v} onClick={() => updateAttributes({ ratio: v })}
+                  className={`px-1.5 py-0.5 rounded text-xs transition-colors ${ratio === v ? 'bg-violet-600 text-white' : 'bg-zinc-200 text-zinc-600 hover:bg-zinc-300'}`}>
+                  {l}
+                </button>
+              ))}
+            </div>
             <div className="flex items-center gap-1 text-xs text-zinc-400">
               Cols:
               {[1, 2, 3].map(n => (
@@ -64,7 +74,7 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
           ) : (
             <div className={`grid gap-2`} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
               {srcs.map((src, i) => (
-                <div key={i} className="relative group aspect-video rounded-lg overflow-hidden bg-zinc-100">
+                <div key={i} className={`relative group rounded-lg overflow-hidden bg-zinc-100 ${ratio === 'sq' ? 'aspect-square' : ratio === 'vid' ? 'aspect-video' : ratio === 'port' ? 'aspect-[3/4]' : ''}`}>
                   <Image src={src} alt="" fill className="object-cover" sizes="400px" />
                   <button onClick={() => removeImage(i)}
                     className="absolute top-1 right-1 p-1 bg-zinc-900/70 hover:bg-red-600 rounded opacity-0 group-hover:opacity-100 transition-all text-white">
@@ -96,6 +106,7 @@ export const ImageGridNode = Node.create({
     return {
       srcs: { default: [] },
       cols: { default: 2 },
+      ratio: { default: 'sq' },
     }
   },
   parseHTML() {
@@ -104,6 +115,7 @@ export const ImageGridNode = Node.create({
       getAttrs: (dom: HTMLElement) => ({
         srcs: JSON.parse(dom.getAttribute('data-srcs') || '[]'),
         cols: parseInt(dom.getAttribute('data-cols') || '2'),
+        ratio: dom.getAttribute('data-ratio') || 'sq',
       }),
     }]
   },
@@ -112,6 +124,7 @@ export const ImageGridNode = Node.create({
       'data-image-grid': '',
       'data-srcs': JSON.stringify(node.attrs.srcs),
       'data-cols': String(node.attrs.cols),
+      'data-ratio': String(node.attrs.ratio || 'sq'),
     })]
   },
   addNodeView() {
