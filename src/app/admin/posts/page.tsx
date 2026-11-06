@@ -1,4 +1,6 @@
-import { createClient } from '@/lib/supabase/server'
+export const dynamic = 'force-dynamic'
+
+import { createServiceClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Plus, Edit, Eye } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
@@ -7,7 +9,7 @@ import type { Post, Category } from '@/lib/types'
 type PostRow = Post & { categories: Pick<Category, 'name' | 'color'> | null }
 
 export default async function AdminPostsPage() {
-  const supabase = await createClient()
+  const supabase = await createServiceClient()
   const { data: posts } = await supabase
     .from('posts')
     .select('*, categories(name, color)')

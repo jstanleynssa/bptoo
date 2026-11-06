@@ -1,11 +1,13 @@
-import { createClient } from '@/lib/supabase/server'
+export const dynamic = 'force-dynamic'
+
+import { createServiceClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Plus, Edit } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import type { Project } from '@/lib/types'
 
 export default async function AdminProjectsPage() {
-  const supabase = await createClient()
+  const supabase = await createServiceClient()
   const { data } = await supabase.from('projects').select('*').order('sort_order').order('updated_at', { ascending: false })
   const projects = (data ?? []) as Project[]
 

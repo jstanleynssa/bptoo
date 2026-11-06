@@ -1,10 +1,12 @@
-import { createClient } from '@/lib/supabase/server'
+export const dynamic = 'force-dynamic'
+
+import { createServiceClient } from '@/lib/supabase/server'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
 import DeleteCommentButton from './DeleteCommentButton'
 
 export default async function AdminCommentsPage() {
-  const supabase = await createClient()
+  const supabase = await createServiceClient()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: comments } = await (supabase.from('comments') as any)
     .select('*')

@@ -1,11 +1,13 @@
-import { createClient } from '@/lib/supabase/server'
+export const dynamic = 'force-dynamic'
+
+import { createServiceClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Plus, Upload } from 'lucide-react'
 import Image from 'next/image'
 import type { Artwork } from '@/lib/types'
 
 export default async function AdminArtworkPage() {
-  const supabase = await createClient()
+  const supabase = await createServiceClient()
   const { data } = await supabase.from('artwork').select('*').order('sort_order').order('created_at', { ascending: false })
   const artworks = (data ?? []) as Artwork[]
 

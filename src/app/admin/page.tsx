@@ -1,8 +1,10 @@
-import { createClient } from '@/lib/supabase/server'
+export const dynamic = 'force-dynamic'
+
+import { createServiceClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { FileText, Folder, Image, Plus } from 'lucide-react'
 
-async function getCounts(supabase: Awaited<ReturnType<typeof createClient>>) {
+async function getCounts(supabase: Awaited<ReturnType<typeof createServiceClient>>) {
   const [posts, projects, artwork] = await Promise.all([
     supabase.from('posts').select('id, status'),
     supabase.from('projects').select('id, status'),
@@ -20,7 +22,7 @@ async function getCounts(supabase: Awaited<ReturnType<typeof createClient>>) {
 }
 
 export default async function AdminDashboard() {
-  const supabase = await createClient()
+  const supabase = await createServiceClient()
   const counts = await getCounts(supabase)
 
   const cards = [
