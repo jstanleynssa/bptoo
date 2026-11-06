@@ -158,7 +158,14 @@ export default function ContentRenderer({ html, className }: ContentRendererProp
       if (domNode.attribs?.['data-screenplay'] !== undefined) {
         const linesRaw = domNode.attribs['data-lines'] ?? '[]'
         try {
-          const lines: ScreenplayLine[] = JSON.parse(linesRaw)
+          const parsed = JSON.parse(linesRaw)
+          // Handle double-encoded strings or non-array values
+          const lines: ScreenplayLine[] = Array.isArray(parsed)
+            ? parsed
+            : Array.isArray(JSON.parse(parsed))
+              ? JSON.parse(parsed)
+              : []
+          if (!lines.length) return <></>
           return <ScreenplayRenderer lines={lines} />
         } catch { return <></> }
       }
