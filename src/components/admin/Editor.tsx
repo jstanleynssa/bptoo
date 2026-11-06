@@ -56,6 +56,7 @@ function ToolbarButton({
 
 export default function Editor({ content, onChange, placeholder = 'Write something…' }: EditorProps) {
   const editor = useEditor({
+    immediatelyRender: false,  // prevents empty-HTML flash on SSR mount
     extensions: [
       StarterKit,
       ScreenplayBlock,
@@ -75,7 +76,9 @@ export default function Editor({ content, onChange, placeholder = 'Write somethi
     ],
     content: content || '',
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML())
+      const html = editor.getHTML()
+      // Guard: don't overwrite real content with an empty-mount flash
+      if (html && html !== '<p></p>') onChange(html)
     },
     editorProps: {
       attributes: {

@@ -71,7 +71,23 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
               className="w-full py-8 text-sm text-zinc-400 hover:text-zinc-600 text-center border-2 border-dashed border-zinc-200 rounded-lg transition-colors">
               Click to add images from library
             </button>
-          ) : (
+          ) : ratio === 'free' ? (
+              <div style={{ columns: cols, gap: '8px' }}>
+                {srcs.map((src, i) => (
+                  <div key={i} className="relative group mb-2 rounded-lg overflow-hidden bg-zinc-100 break-inside-avoid">
+                    <Image src={src} alt="" width={400} height={400} className="w-full h-auto object-cover block group-hover:scale-105 transition-transform duration-300" sizes="200px" />
+                    <button onClick={() => removeImage(i)}
+                      className="absolute top-1 right-1 p-1 bg-zinc-900/70 hover:bg-red-600 rounded opacity-0 group-hover:opacity-100 transition-all text-white">
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+                <button onClick={() => setPickerOpen(true)}
+                  className="w-full mb-2 py-6 rounded-lg border-2 border-dashed border-zinc-200 hover:border-violet-400 flex items-center justify-center text-zinc-400 hover:text-violet-500 transition-colors text-sm break-inside-avoid">
+                  + Add
+                </button>
+              </div>
+            ) : (
             <div className={`grid gap-2`} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
               {srcs.map((src, i) => (
                 <div key={i} className={`relative group rounded-lg overflow-hidden bg-zinc-100 ${ratio === 'sq' ? 'aspect-square' : ratio === 'vid' ? 'aspect-video' : ratio === 'port' ? 'aspect-[3/4]' : ''}`}>

@@ -69,6 +69,22 @@ function VideoRenderer({ src }: { src: string }) {
 function ImageGridRenderer({ srcs, cols, ratio, onImageClick }: { srcs: string[]; cols: number; ratio?: string; onImageClick: (src: string, all: string[]) => void }) {
   if (!srcs.length) return null
   const ratioClass = ratio === 'sq' ? 'aspect-square' : ratio === 'vid' ? 'aspect-video' : ratio === 'port' ? 'aspect-[3/4]' : ''
+
+  if (ratio === 'free') {
+    // Masonry: natural proportions, no cropping
+    return (
+      <div className="my-8 not-prose" style={{ columns: cols, gap: '8px' }}>
+        {srcs.map((src, i) => (
+          <button key={i} onClick={() => onImageClick(src, srcs)}
+            className="block w-full mb-2 rounded-xl overflow-hidden cursor-zoom-in group break-inside-avoid">
+            <Image src={src} alt="" width={600} height={600}
+              className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300" sizes="400px" />
+          </button>
+        ))}
+      </div>
+    )
+  }
+
   return (
     <div className="my-8 not-prose" style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: '8px' }}>
       {srcs.map((src, i) => (
