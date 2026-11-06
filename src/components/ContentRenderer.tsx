@@ -110,7 +110,15 @@ export default function ContentRenderer({ html, className }: ContentRendererProp
               style={{ display: 'block', cursor: 'zoom-in' }}
             />
             {caption && (
-              <figcaption className="mt-2 text-center text-sm italic opacity-50">{caption}</figcaption>
+              <figcaption className="mt-2 text-center text-sm italic opacity-50">
+                {(() => {
+                  const captionLinkEl = domNode.children?.find((c): c is Element => c instanceof Element && c.name === 'figcaption')?.children?.find((c): c is Element => c instanceof Element && c.name === 'a')
+                  const href = captionLinkEl?.attribs?.href
+                  return href
+                    ? <a href={href} target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80 transition-opacity">{caption}</a>
+                    : <>{caption}</>
+                })()}
+              </figcaption>
             )}
           </figure>
         )
