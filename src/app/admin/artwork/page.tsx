@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Plus } from 'lucide-react'
+import { Plus, Upload } from 'lucide-react'
 import Image from 'next/image'
 import type { Artwork } from '@/lib/types'
 
@@ -16,9 +16,14 @@ export default async function AdminArtworkPage() {
           <h1 className="text-2xl font-bold">Artwork</h1>
           <p className="text-zinc-400 text-sm mt-1">{artworks.length} pieces</p>
         </div>
-        <Link href="/admin/artwork/new" className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-500 rounded-lg text-sm font-medium transition-colors">
-          <Plus size={16} /> Add artwork
-        </Link>
+        <div className="flex gap-2">
+          <Link href="/admin/artwork/batch" className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-sm transition-colors">
+            <Upload size={16} /> Batch upload
+          </Link>
+          <Link href="/admin/artwork/new" className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-500 rounded-lg text-sm font-medium transition-colors">
+            <Plus size={16} /> Add one
+          </Link>
+        </div>
       </div>
       {!artworks.length ? (
         <div className="text-center py-20 text-zinc-500">
