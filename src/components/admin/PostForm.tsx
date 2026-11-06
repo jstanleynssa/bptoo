@@ -26,6 +26,9 @@ export default function PostForm({ post, categories }: PostFormProps) {
   const [coverImageUrl, setCoverImageUrl] = useState(post?.cover_image_url ?? '')
   const [categoryId, setCategoryId] = useState(post?.category_id ?? '')
   const [status, setStatus] = useState<'draft' | 'published'>(post?.status ?? 'draft')
+  const [publishedAt, setPublishedAt] = useState<string>(
+    post?.published_at ? post.published_at.slice(0, 10) : ''
+  )
   const [hoursSpent, setHoursSpent] = useState<string>(post?.hours_spent?.toString() ?? '')
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -51,7 +54,11 @@ export default function PostForm({ post, categories }: PostFormProps) {
       category_id: categoryId || null,
       hours_spent: hoursSpent ? parseFloat(hoursSpent) : null,
       status: finalStatus,
-      published_at: finalStatus === 'published' && !post?.published_at ? new Date().toISOString() : post?.published_at ?? null,
+      published_at: publishedAt
+        ? new Date(publishedAt).toISOString()
+        : finalStatus === 'published' && !post?.published_at
+          ? new Date().toISOString()
+          : post?.published_at ?? null,
     }
 
     let error
@@ -184,6 +191,17 @@ export default function PostForm({ post, categories }: PostFormProps) {
               <option key={cat.id} value={cat.id}>{cat.name}</option>
             ))}
           </select>
+        </div>
+
+        {/* Published date */}
+        <div>
+          <label className="block text-sm text-zinc-400 mb-2">Published date <span className="text-zinc-600">(leave blank to use today when publishing)</span></label>
+          <input
+            type="date"
+            value={publishedAt}
+            onChange={e => setPublishedAt(e.target.value)}
+            className="px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:border-violet-500 outline-none transition-colors"
+          />
         </div>
 
         {/* Hours spent */}

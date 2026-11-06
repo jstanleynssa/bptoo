@@ -53,6 +53,7 @@ export default function ProjectForm({ project }: { project?: Project }) {
   const [attachments, setAttachments] = useState<Attachment[]>((project?.attachments as Attachment[]) ?? [])
   const [saving, setSaving] = useState(false)
   const [videoUploading, setVideoUploading] = useState(false)
+  const [projectDate, setProjectDate] = useState<string>(project?.project_date?.slice(0, 10) ?? '')
   const [hoursSpent, setHoursSpent] = useState<string>(project?.hours_spent?.toString() ?? '')
 
   function handleTitleChange(value: string) {
@@ -71,6 +72,7 @@ export default function ProjectForm({ project }: { project?: Project }) {
       cover_image_url: coverImageUrl || null,
       url: url || null,
       github_url: githubUrl || null,
+      project_date: projectDate || null,
       project_status: projectStatus || null,
       hours_spent: hoursSpent ? parseFloat(hoursSpent) : null,
       images: galleryImages,
@@ -197,6 +199,16 @@ export default function ProjectForm({ project }: { project?: Project }) {
                 ))}
               </div>
             </div>
+            <div>
+              <label className="block text-sm text-zinc-400 mb-2">Project date <span className="text-zinc-600">(when this happened)</span></label>
+              <input
+                type="date"
+                value={projectDate}
+                onChange={e => setProjectDate(e.target.value)}
+                className="px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:border-violet-500 outline-none transition-colors"
+              />
+            </div>
+
             <div>
               <label className="block text-sm text-zinc-400 mb-2">Hours spent <span className="text-zinc-600">(optional)</span></label>
               <div className="flex items-center gap-2">

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft, ExternalLink, Download } from 'lucide-react'
+import { format } from 'date-fns'
 import ContentRenderer from '@/components/ContentRenderer'
 import CommentsSection from '@/components/CommentsSection'
 import type { Project } from '@/lib/types'
@@ -59,6 +60,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         {project.hours_spent && (
           <span className="text-sm px-3 py-1 rounded-full bg-white/10 text-white/60">
             ⏱ {project.hours_spent % 1 === 0 ? project.hours_spent : Number(project.hours_spent).toFixed(1)}h invested
+          </span>
+        )}
+        {project.project_date && (
+          <span className="text-sm px-3 py-1 rounded-full bg-white/10 text-white/60">
+            {format(new Date(project.project_date), 'MMMM yyyy')}
           </span>
         )}
       </div>
