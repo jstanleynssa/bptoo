@@ -24,18 +24,23 @@ export default function MediaPicker({ onSelect, onClose }: MediaPickerProps) {
   const supabase = createClient()
 
   const load = useCallback(async () => {
-    const { data } = await supabase.storage.from('media').list('', {
-      limit: 200,
-      sortBy: { column: 'created_at', order: 'desc' },
-    })
-    const withUrls = (data ?? [])
-      .filter(f => f.name !== '.emptyFolderPlaceholder' && f.metadata?.mimetype?.startsWith('image/'))
-      .map(f => ({
-        ...f,
-        publicUrl: supabase.storage.from('media').getPublicUrl(f.name).data.publicUrl,
-        metadata: f.metadata as { size: number; mimetype: string },
-      })) as MediaFile[]
-    setFiles(withUrls)
+    const folders = ['', 'artwork', 'posts', 'projects', 'gallery', 'uploads', 'attachments']
+    const allFiles: MediaFile[] = []
+    for (const folder of folders) {
+      const prefix = folder ? `${folder}/` : ''
+      const { data } = await supabase.storage.from('media').list(folder, {
+        limit: 200,
+        sortBy: { column: 'created_at', order: 'desc' },
+      })
+      ;(data ?? [])
+        .filter(f => f.name !== '.emptyFolderPlaceholder' && f.metadata?.mimetype?.startsWith('image/'))
+        .forEach(f => {
+          const path = prefix + f.name
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          allFiles.push({ ...f, id: f.id ?? path, name: path, publicUrl: supabase.storage.from('media').getPublicUrl(path).data.publicUrl, metadata: f.metadata as { size: number; mimetype: string } } as MediaFile)
+        })
+    }
+    setFiles(allFiles)
     setLoading(false)
   }, [supabase])
 

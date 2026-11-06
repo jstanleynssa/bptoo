@@ -27,21 +27,28 @@ export default function MediaPage() {
 
   const load = useCallback(async () => {
     setLoading(true)
-    const { data, error } = await supabase.storage.from('media').list('', {
-      limit: 200,
-      sortBy: { column: 'created_at', order: 'desc' },
-    })
-    if (error) { toast.error(error.message); setLoading(false); return }
-
-    const withUrls = (data ?? [])
-      .filter(f => f.name !== '.emptyFolderPlaceholder' && f.metadata)
-      .map(f => ({
-        ...f,
-        publicUrl: supabase.storage.from('media').getPublicUrl(f.name).data.publicUrl,
-        metadata: f.metadata as { size: number; mimetype: string },
-      })) as MediaFile[]
-
-    setFiles(withUrls)
+    
+    // List root + all known subfolders to find every file in the bucket
+    const folders = ['', 'artwork', 'posts', 'projects', 'gallery', 'uploads', 'attachments', 'videos']
+    const allFiles: MediaFile[] = []
+    
+    for (const folder of folders) {
+      const prefix = folder ? `${folder}/` : ''
+      const { data } = await supabase.storage.from('media').list(folder, {
+        limit: 200,
+        sortBy: { column: 'created_at', order: 'desc' },
+      })
+      ;(data ?? [])
+        .filter(f => f.name !== '.emptyFolderPlaceholder' && f.metadata)
+        .forEach(f => {
+          const path = prefix + f.name
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          allFiles.push({ ...f, id: f.id ?? path, name: path, publicUrl: supabase.storage.from('media').getPublicUrl(path).data.publicUrl, metadata: f.metadata as { size: number; mimetype: string } } as MediaFile)
+        })
+    }
+    
+    // Sort newest first
+    setFiles(allFiles)
     setLoading(false)
   }, [supabase])
 
