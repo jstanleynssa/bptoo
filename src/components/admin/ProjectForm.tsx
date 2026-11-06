@@ -11,6 +11,8 @@ import { Project } from '@/lib/types'
 import slugify from 'slugify'
 import { toast } from 'sonner'
 import { Save, Send, Trash2, Loader2, Upload } from 'lucide-react'
+import { TOOLS } from '@/lib/tools'
+import ToolBadge from '@/components/ToolBadge'
 
 const TABS = ['Overview', 'Gallery', 'Video', 'Files'] as const
 type Tab = typeof TABS[number]
@@ -53,6 +55,7 @@ export default function ProjectForm({ project }: { project?: Project }) {
   const [attachments, setAttachments] = useState<Attachment[]>((project?.attachments as Attachment[]) ?? [])
   const [saving, setSaving] = useState(false)
   const [videoUploading, setVideoUploading] = useState(false)
+  const [tools, setTools] = useState<string[]>(project?.tools ?? [])
   const [projectDate, setProjectDate] = useState<string>(project?.project_date?.slice(0, 10) ?? '')
   const [hoursSpent, setHoursSpent] = useState<string>(project?.hours_spent?.toString() ?? '')
 
@@ -73,6 +76,7 @@ export default function ProjectForm({ project }: { project?: Project }) {
       url: url || null,
       github_url: githubUrl || null,
       project_date: projectDate || null,
+      tools,
       project_status: projectStatus || null,
       hours_spent: hoursSpent ? parseFloat(hoursSpent) : null,
       images: galleryImages,
@@ -218,6 +222,35 @@ export default function ProjectForm({ project }: { project?: Project }) {
                   className="w-32 px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:border-violet-500 outline-none transition-colors" />
                 <span className="text-sm text-zinc-500">hours</span>
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm text-zinc-400 mb-3">Tools used</label>
+              <div className="flex flex-wrap gap-2 mb-2">
+                {TOOLS.map(tool => {
+                  const selected = tools.includes(tool.id)
+                  return (
+                    <button
+                      key={tool.id}
+                      type="button"
+                      onClick={() => setTools(prev =>
+                        selected ? prev.filter(t => t !== tool.id) : [...prev, tool.id]
+                      )}
+                      className={`transition-all rounded-lg ${
+                        selected
+                          ? 'ring-2 ring-violet-500 ring-offset-2 ring-offset-zinc-900 scale-105'
+                          : 'opacity-50 hover:opacity-80'
+                      }`}
+                      title={tool.label}
+                    >
+                      <ToolBadge toolId={tool.id} size="sm" />
+                    </button>
+                  )
+                })}
+              </div>
+              {tools.length > 0 && (
+                <p className="text-xs text-zinc-600">{tools.length} tool{tools.length > 1 ? 's' : ''} selected · <button type="button" className="underline hover:text-zinc-400" onClick={() => setTools([])}>Clear all</button></p>
+              )}
             </div>
 
             <label className="flex items-center gap-2 cursor-pointer">

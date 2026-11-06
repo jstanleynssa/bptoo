@@ -61,6 +61,7 @@ export interface Database {
           github_url: string | null
           project_status: 'done' | 'building' | 'paused' | 'scheming' | 'adrift' | 'abandoned' | null
           project_date: string | null
+          tools: string[]
           hours_spent: number | null
           video_url: string | null
           attachments: { name: string; url: string; type: string }[]

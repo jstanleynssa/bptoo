@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft, ExternalLink, Download } from 'lucide-react'
+import ToolBadge from '@/components/ToolBadge'
 import { format } from 'date-fns'
 import ContentRenderer from '@/components/ContentRenderer'
 import CommentsSection from '@/components/CommentsSection'
@@ -72,7 +73,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       <h1 className="text-4xl text-white mb-4 leading-tight" style={{ fontFamily: 'Peralta, serif' }}>
         {project.title}
       </h1>
-      {project.description && <p className="text-xl text-white/60 leading-relaxed mb-8">{project.description}</p>}
+      {project.description && <p className="text-xl text-white/60 leading-relaxed mb-6">{project.description}</p>}
+
+      {/* Tools used */}
+      {project.tools?.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-8">
+          {project.tools.map(t => <ToolBadge key={t} toolId={t} />)}
+        </div>
+      )}
 
       {(project.url || project.github_url) && (
         <div className="flex gap-3 mb-10">
