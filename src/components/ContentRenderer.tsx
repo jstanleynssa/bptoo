@@ -93,6 +93,29 @@ export default function ContentRenderer({ html, className }: ContentRendererProp
     replace(domNode) {
       if (!(domNode instanceof Element)) return
 
+      // Figure with caption
+      if (domNode.name === 'figure' && domNode.attribs?.['data-figure'] !== undefined) {
+        const imgEl = domNode.children?.find((c): c is Element => c instanceof Element && c.name === 'img')
+        const captionEl = domNode.children?.find((c): c is Element => c instanceof Element && c.name === 'figcaption')
+        const src = imgEl?.attribs?.src ?? ''
+        const caption = captionEl?.children?.map((c) => ('data' in c ? (c as {data?: string}).data : '') ?? '').join('') ?? ''
+        if (!src) return <></>
+        return (
+          <figure className="my-6 not-prose">
+            <img
+              src={src}
+              alt={caption}
+              className="w-full h-auto rounded-xl cursor-zoom-in hover:opacity-90 transition-opacity"
+              onClick={() => setLightboxSrc(src)}
+              style={{ display: 'block', cursor: 'zoom-in' }}
+            />
+            {caption && (
+              <figcaption className="mt-2 text-center text-sm italic opacity-50">{caption}</figcaption>
+            )}
+          </figure>
+        )
+      }
+
       // Inline images — make clickable for lightbox
       if (domNode.name === 'img' && domNode.attribs?.src) {
         const { src, alt, class: cls } = domNode.attribs

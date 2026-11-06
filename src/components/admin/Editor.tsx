@@ -8,6 +8,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 import { ScreenplayBlock } from '@/components/admin/extensions/ScreenplayBlock'
 import { VideoEmbedNode } from '@/components/admin/extensions/VideoEmbed'
 import { ImageGridNode } from '@/components/admin/extensions/ImageGrid'
+import { FigureNode } from '@/components/admin/extensions/FigureNode'
 import { Table } from '@tiptap/extension-table'
 import { TableRow } from '@tiptap/extension-table-row'
 import { TableHeader } from '@tiptap/extension-table-header'
@@ -16,7 +17,7 @@ import {
   Bold, Italic, Strikethrough, Code, Heading2, Heading3,
   List, ListOrdered, Quote, Minus, Link as LinkIcon,
   Image as ImageIcon, Undo, Redo, Code2, Film, Images, Clapperboard,
-  Table as TableIcon, RowsIcon, Columns3, Trash2,
+  Table as TableIcon, RowsIcon, Columns3, Trash2, ImagePlus,
 } from 'lucide-react'
 import { useCallback } from 'react'
 
@@ -60,6 +61,7 @@ export default function Editor({ content, onChange, placeholder = 'Write somethi
       ScreenplayBlock,
       VideoEmbedNode,
       ImageGridNode,
+      FigureNode,
       Table.configure({ resizable: true }),
       TableRow,
       TableHeader,
@@ -172,6 +174,11 @@ export default function Editor({ content, onChange, placeholder = 'Write somethi
 
         <div className="w-px bg-zinc-700 mx-1 self-stretch" />
 
+        <ToolbarButton
+          onClick={() => editor.chain().focus().insertContent({ type: 'figure', attrs: { src: '', caption: '' } }).run()}
+          active={false} title="Image with caption">
+          <ImagePlus size={15} />
+        </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
           active={false} title="Insert table">
