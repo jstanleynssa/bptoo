@@ -24,6 +24,7 @@ export const TOOLS: Tool[] = [
   { id: 'heatpress',    label: 'Heat Press',   emoji: '🔥',  color: '#FF6B35' },
   { id: 'photography',  label: 'Photography',  emoji: '📷',  color: '#8B9196' },
   { id: 'camera',       label: 'Video Camera', emoji: '🎥',  color: '#8B9196' },
+  { id: 'iphone',       label: 'iPhone',       emoji: '📱',  color: '#6E6E73' },
   { id: '3dprint',      label: '3D Printing',  emoji: '🖨️', color: '#E76F51' },
   { id: 'sewing',       label: 'Sewing',       emoji: '🧵',  color: '#E63946' },
   // ── AI / digital ─────────────────────────────────────────────────────────
