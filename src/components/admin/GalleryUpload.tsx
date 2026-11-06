@@ -42,8 +42,9 @@ export default function GalleryUpload({ images, onChange, folder = 'gallery' }: 
     onChange(images.filter(u => u !== url))
   }
 
-  function fromLibrary(url: string) {
-    if (!images.includes(url)) onChange([...images, url])
+  function fromLibrary(urls: string[]) {
+    const newUrls = urls.filter(u => !images.includes(u))
+    if (newUrls.length) onChange([...images, ...newUrls])
     setPickerOpen(false)
   }
 
@@ -91,7 +92,7 @@ export default function GalleryUpload({ images, onChange, folder = 'gallery' }: 
         onChange={e => handleFiles(e.target.files)} />
 
       {pickerOpen && (
-        <MediaPicker onSelect={fromLibrary} onClose={() => setPickerOpen(false)} />
+        <MediaPicker onSelectMultiple={fromLibrary} onClose={() => setPickerOpen(false)} />
       )}
     </div>
   )

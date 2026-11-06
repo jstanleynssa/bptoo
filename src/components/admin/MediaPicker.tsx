@@ -13,15 +13,17 @@ interface MediaFile {
 }
 
 interface MediaPickerProps {
-  onSelect: (url: string) => void
+  onSelect?: (url: string) => void             // single-select mode
+  onSelectMultiple?: (urls: string[]) => void  // multi-select mode
   onClose: () => void
 }
 
-export default function MediaPicker({ onSelect, onClose }: MediaPickerProps) {
+export default function MediaPicker({ onSelect, onSelectMultiple, onClose }: MediaPickerProps) {
   const [files, setFiles] = useState<MediaFile[]>([])
   const [loading, setLoading] = useState(true)
-  const [selected, setSelected] = useState<string | null>(null)
+  const [selected, setSelected] = useState<Set<string>>(new Set())
   const supabase = createClient()
+  const isMulti = !!onSelectMultiple
 
   const load = useCallback(async () => {
     const folders = ['', 'artwork', 'posts', 'projects', 'gallery', 'uploads', 'attachments']
@@ -36,8 +38,11 @@ export default function MediaPicker({ onSelect, onClose }: MediaPickerProps) {
         .filter(f => f.name !== '.emptyFolderPlaceholder' && f.metadata?.mimetype?.startsWith('image/'))
         .forEach(f => {
           const path = prefix + f.name
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          allFiles.push({ ...f, id: f.id ?? path, name: path, publicUrl: supabase.storage.from('media').getPublicUrl(path).data.publicUrl, metadata: f.metadata as { size: number; mimetype: string } } as MediaFile)
+          allFiles.push({
+            ...f, id: f.id ?? path, name: path,
+            publicUrl: supabase.storage.from('media').getPublicUrl(path).data.publicUrl,
+            metadata: f.metadata as { size: number; mimetype: string },
+          } as unknown as MediaFile)
         })
     }
     setFiles(allFiles)
@@ -46,33 +51,55 @@ export default function MediaPicker({ onSelect, onClose }: MediaPickerProps) {
 
   useEffect(() => { load() }, [load])
 
-  // Close on Escape
   useEffect(() => {
     function onKey(e: KeyboardEvent) { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = '' }
   }, [onClose])
 
-  function confirm() {
-    if (selected) { onSelect(selected); onClose() }
+  function toggle(url: string) {
+    if (!isMulti) {
+      // Single select: immediately confirm
+      onSelect?.(url)
+      onClose()
+      return
+    }
+    setSelected(prev => {
+      const next = new Set(prev)
+      if (next.has(url)) next.delete(url)
+      else next.add(url)
+      return next
+    })
   }
+
+  function confirm() {
+    if (isMulti) {
+      onSelectMultiple?.(Array.from(selected))
+      onClose()
+    } else if (selected.size === 1) {
+      onSelect?.(Array.from(selected)[0])
+      onClose()
+    }
+  }
+
+  const count = selected.size
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Modal */}
       <div className="relative bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-3xl max-h-[80vh] flex flex-col shadow-2xl">
-        {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-800 shrink-0">
-          <h2 className="font-semibold text-white">Media Library</h2>
+          <h2 className="font-semibold text-white">
+            Media Library
+            {isMulti && <span className="ml-2 text-xs text-zinc-500 font-normal">Click to select multiple</span>}
+          </h2>
           <button onClick={onClose} className="p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors">
             <X size={16} />
           </button>
         </div>
 
-        {/* Grid */}
         <div className="flex-1 overflow-y-auto p-4">
           {loading ? (
             <div className="flex items-center justify-center py-16 text-zinc-500">
@@ -82,49 +109,42 @@ export default function MediaPicker({ onSelect, onClose }: MediaPickerProps) {
             <p className="text-center py-16 text-zinc-500">No images in your media library yet.</p>
           ) : (
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
-              {files.map(file => (
-                <button
-                  key={file.id}
-                  type="button"
-                  onClick={() => setSelected(file.publicUrl === selected ? null : file.publicUrl)}
-                  className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
-                    selected === file.publicUrl
-                      ? 'border-violet-500 scale-95'
-                      : 'border-transparent hover:border-zinc-600'
-                  }`}
-                >
-                  <Image src={file.publicUrl} alt={file.name} fill className="object-cover" sizes="140px" />
-                  {selected === file.publicUrl && (
-                    <div className="absolute inset-0 bg-violet-600/30 flex items-center justify-center">
-                      <div className="w-6 h-6 rounded-full bg-violet-600 flex items-center justify-center">
-                        <Check size={12} className="text-white" />
+              {files.map(file => {
+                const isSelected = selected.has(file.publicUrl)
+                return (
+                  <button key={file.id} type="button" onClick={() => toggle(file.publicUrl)}
+                    className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
+                      isSelected ? 'border-violet-500 scale-95' : 'border-transparent hover:border-zinc-600'
+                    }`}>
+                    <Image src={file.publicUrl} alt={file.name} fill className="object-cover" sizes="140px" />
+                    {isSelected && (
+                      <div className="absolute inset-0 bg-violet-600/30 flex items-center justify-center">
+                        <div className="w-6 h-6 rounded-full bg-violet-600 flex items-center justify-center">
+                          <Check size={12} className="text-white" />
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </button>
-              ))}
+                    )}
+                  </button>
+                )
+              })}
             </div>
           )}
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between px-5 py-4 border-t border-zinc-800 shrink-0">
-          <span className="text-sm text-zinc-500">
-            {selected ? '1 selected' : 'Click an image to select it'}
-          </span>
-          <div className="flex gap-2">
-            <button onClick={onClose} className="px-4 py-2 text-sm bg-zinc-800 hover:bg-zinc-700 rounded-lg transition-colors">
-              Cancel
-            </button>
-            <button
-              onClick={confirm}
-              disabled={!selected}
-              className="px-4 py-2 text-sm bg-violet-600 hover:bg-violet-500 rounded-lg font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              Use image
-            </button>
+        {isMulti && (
+          <div className="flex items-center justify-between px-5 py-4 border-t border-zinc-800 shrink-0">
+            <span className="text-sm text-zinc-500">
+              {count > 0 ? `${count} image${count > 1 ? 's' : ''} selected` : 'Click images to select them'}
+            </span>
+            <div className="flex gap-2">
+              <button onClick={onClose} className="px-4 py-2 text-sm bg-zinc-800 hover:bg-zinc-700 rounded-lg transition-colors">Cancel</button>
+              <button onClick={confirm} disabled={count === 0}
+                className="px-4 py-2 text-sm bg-violet-600 hover:bg-violet-500 rounded-lg font-medium transition-colors disabled:opacity-40">
+                Add {count > 0 ? count : ''} image{count !== 1 ? 's' : ''}
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

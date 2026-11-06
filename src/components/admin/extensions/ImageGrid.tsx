@@ -20,8 +20,8 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
   const rawCols = node.attrs.cols
   const cols = typeof rawCols === 'string' ? parseInt(rawCols) || 2 : (rawCols as number) ?? 2
 
-  function addImage(url: string) {
-    updateAttributes({ srcs: [...srcs, url] })
+  function addImages(urls: string[]) {
+    updateAttributes({ srcs: [...srcs, ...urls] })
     setPickerOpen(false)
   }
 
@@ -82,7 +82,7 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
       </div>
 
       {pickerOpen && (
-        <MediaPicker onSelect={addImage} onClose={() => setPickerOpen(false)} />
+        <MediaPicker onSelectMultiple={addImages} onClose={() => setPickerOpen(false)} />
       )}
     </NodeViewWrapper>
   )
