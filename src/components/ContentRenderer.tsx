@@ -115,7 +115,10 @@ export default function ContentRenderer({ html, className }: ContentRendererProp
         const imgEl = domNode.children?.find((c): c is Element => c instanceof Element && c.name === 'img')
         const captionEl = domNode.children?.find((c): c is Element => c instanceof Element && c.name === 'figcaption')
         const src = imgEl?.attribs?.src ?? ''
-        const caption = captionEl?.children?.map((c) => ('data' in c ? (c as {data?: string}).data : '') ?? '').join('') ?? ''
+        // Caption text may be in a direct text node OR inside an <a> child
+        const captionAEl = captionEl?.children?.find((c): c is Element => c instanceof Element && c.name === 'a')
+        const textNodes = (captionAEl ?? captionEl)?.children
+        const caption = textNodes?.map((c) => ('data' in c ? (c as {data?: string}).data : '') ?? '').join('') ?? ''
         if (!src) return <></>
         return (
           <figure className="my-6 not-prose">
@@ -128,14 +131,9 @@ export default function ContentRenderer({ html, className }: ContentRendererProp
             />
             {caption && (
               <figcaption className="mt-2 text-center text-sm italic opacity-50">
-                {(() => {
-                  const figEl = domNode.children?.find((c): c is Element => c instanceof Element && c.name === 'figcaption')
-                  const captionLinkEl = figEl?.children?.find((c): c is Element => c instanceof Element && c.name === 'a')
-                  const href = captionLinkEl?.attribs?.href
-                  return href
-                    ? <a href={href} target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80 transition-opacity">{caption}</a>
-                    : <>{caption}</>
-                })()}
+                {captionAEl?.attribs?.href
+                  ? <a href={captionAEl.attribs.href} target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80 transition-opacity">{caption}</a>
+                  : <>{caption}</>}
               </figcaption>
             )}
           </figure>
