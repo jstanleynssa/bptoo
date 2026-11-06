@@ -5,6 +5,7 @@ import MobileNav from '@/components/MobileNav'
 
 const NAV_LINKS = [
   { href: '/about', label: 'About' },
+          { href: '/all', label: 'All' },
   { href: '/blog', label: 'Blog' },
   { href: '/projects', label: 'Projects' },
   { href: '/artwork', label: 'Artwork' },

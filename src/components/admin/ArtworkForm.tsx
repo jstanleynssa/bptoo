@@ -22,6 +22,7 @@ export default function ArtworkForm({ artwork }: { artwork?: Artwork }) {
   const [medium, setMedium] = useState(artwork?.medium ?? '')
   const [year, setYear] = useState<string>(artwork?.year?.toString() ?? new Date().getFullYear().toString())
   const [featured, setFeatured] = useState(artwork?.featured ?? false)
+  const [inFeed, setInFeed] = useState(artwork?.in_feed ?? false)
   const [status, setStatus] = useState<'draft' | 'published'>(artwork?.status ?? 'draft')
   const [saving, setSaving] = useState(false)
 
@@ -43,6 +44,7 @@ export default function ArtworkForm({ artwork }: { artwork?: Artwork }) {
       medium: medium || null,
       year: year ? parseInt(year) : null,
       featured,
+      in_feed: inFeed,
       status: finalStatus,
     }
 
@@ -131,6 +133,10 @@ export default function ArtworkForm({ artwork }: { artwork?: Artwork }) {
         <label className="flex items-center gap-2 cursor-pointer">
           <input type="checkbox" checked={featured} onChange={e => setFeatured(e.target.checked)} className="accent-violet-500 w-4 h-4" />
           <span className="text-sm text-zinc-400">Feature on homepage</span>
+        </label>
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" checked={inFeed} onChange={e => setInFeed(e.target.checked)} className="accent-violet-500 w-4 h-4" />
+          <span className="text-sm text-zinc-400">Include in All feed</span>
         </label>
       </div>
     </div>

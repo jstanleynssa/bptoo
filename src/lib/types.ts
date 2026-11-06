@@ -87,6 +87,7 @@ export interface Database {
           image_url: string
           medium: string | null
           year: number | null
+          in_feed: boolean
           status: 'draft' | 'published'
           featured: boolean
           sort_order: number
