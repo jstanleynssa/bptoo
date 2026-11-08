@@ -70,18 +70,20 @@ export default function ToolBadge({ toolId, size = 'md' }: ToolBadgeProps) {
             transition={{ type: 'spring', stiffness: 500, damping: 28, mass: 0.6 }}
           >
             <div
-              className="flex flex-col items-center gap-2 px-4 py-3 rounded-2xl border border-white/10 shadow-2xl"
-              style={{ backgroundColor: '#18181b', minWidth: 80, whiteSpace: 'nowrap' }}
+              className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-white/10 shadow-2xl"
+              style={{ backgroundColor: '#18181b', maxWidth: 220 }}
             >
-              {/* Large badge in tooltip */}
-              <BadgeContent tool={tool} dim={48} fontSize={18} />
-              {/* Tool name + description */}
-              <span className="text-xs font-semibold text-white/80">{tool.label}</span>
-              {tool.description && (
-                <span className="text-[11px] text-white/50 text-center leading-tight" style={{ maxWidth: 140 }}>
-                  {tool.description}
-                </span>
-              )}
+              {/* Icon left */}
+              <div className="shrink-0">
+                <BadgeContent tool={tool} dim={40} fontSize={15} />
+              </div>
+              {/* Name + description right */}
+              <div>
+                <p className="text-xs font-semibold text-white/90 leading-tight">{tool.label}</p>
+                {tool.description && (
+                  <p className="text-[11px] text-white/50 leading-snug mt-0.5">{tool.description}</p>
+                )}
+              </div>
             </div>
             {/* Arrow */}
             <div className="flex justify-center">

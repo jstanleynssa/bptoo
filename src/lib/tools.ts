@@ -33,10 +33,14 @@ export const TOOLS: Tool[] = [
   { id: 'midjourney',   label: 'Midjourney',   emoji: '🎨',  color: '#7B61FF', description: 'AI image generation from text prompts' },
   { id: 'chatgpt',      label: 'ChatGPT',      emoji: '💬',  color: '#10A37F', description: "OpenAI's conversational AI assistant" },
   { id: 'claude',       label: 'Claude',       emoji: '🧠',  color: '#CC785C', description: "Anthropic's AI assistant" },
+  { id: 'elevenlabs',   label: 'ElevenLabs',   emoji: '🎙️', color: '#6C47FF', description: 'AI voice cloning & text-to-speech' },
+  { id: 'heygen',       label: 'HeyGen',       emoji: '🎬',  color: '#00C2CB', description: 'AI avatar video generation' },
   // ── Dev / code ───────────────────────────────────────────────────────────
   { id: 'code',         label: 'Custom Code',  emoji: '💻',  color: '#4B9CE2', description: 'Hand-written software & scripting' },
   { id: 'figma',        label: 'Figma',        emoji: '🎯',  color: '#F24E1E', description: 'Collaborative UI design & prototyping' },
   { id: 'davinci',      label: 'DaVinci Resolve', abbr: 'DV', color: '#FFB400', bg: '#1A1A2E', description: 'Professional video editing & color grading' },
+  { id: 'openclaw',     label: 'OpenClaw',     emoji: '🦞',  color: '#7C3AED', description: 'AI agent platform used to build this site' },
+  { id: 'supabase',     label: 'Supabase',     emoji: '🔖',  color: '#3ECF8E', description: 'Open source Firebase alternative — database & storage' },
 ]
 
 export const TOOL_MAP = Object.fromEntries(TOOLS.map(t => [t.id, t]))
