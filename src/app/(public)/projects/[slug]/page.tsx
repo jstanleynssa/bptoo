@@ -76,8 +76,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       </h1>
       {project.description && <p className="text-xl text-white/60 leading-relaxed mb-6">{project.description}</p>}
 
-      {/* Play counter — shows whether video is in tab or content */}
-      {(project.video_plays ?? 0) >= 0 && (project.video_url || project.content?.includes('data-video-embed')) && (
+      {/* Play counter — always show when project has any video */}
+      {(project.video_url || project.content?.includes('video-embed')) && (
         <div className="mb-4">
           <span className="text-sm text-white/40">▶ {(project.video_plays ?? 0).toLocaleString()} {project.video_plays === 1 ? 'play' : 'plays'}</span>
         </div>
