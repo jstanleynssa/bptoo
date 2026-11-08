@@ -35,6 +35,7 @@ export default function MoodPage() {
   const [note, setNote] = useState('')
   const [isPublic, setIsPublic] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [logDate, setLogDate] = useState(new Date().toISOString().slice(0, 10))
   const supabase = createClient()
 
   const load = useCallback(async () => {
@@ -58,6 +59,7 @@ export default function MoodPage() {
       label: info.label,
       note: note || null,
       is_public: isPublic,
+      logged_at: new Date(logDate).toISOString(),
     })
     if (error) { toast.error(error.message) }
     else { toast.success('Mood logged'); setNote(''); await load() }
@@ -103,6 +105,22 @@ export default function MoodPage() {
           <span>🌗 Okay</span>
           <span>🌀 Scattered</span>
           <span>🌕 Hypo</span>
+        </div>
+
+        {/* Date — defaults to today, can backfill past dates */}
+        <div className="flex items-center gap-3 mb-1">
+          <label className="text-sm text-zinc-400 shrink-0">Date</label>
+          <input
+            type="date"
+            value={logDate}
+            max={new Date().toISOString().slice(0, 10)}
+            onChange={e => setLogDate(e.target.value)}
+            className="px-3 py-1.5 bg-zinc-950 border border-zinc-800 rounded-lg text-sm focus:border-violet-500 outline-none transition-colors"
+          />
+          {logDate !== new Date().toISOString().slice(0, 10) && (
+            <button type="button" onClick={() => setLogDate(new Date().toISOString().slice(0, 10))}
+              className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors">Today</button>
+          )}
         </div>
 
         {/* Note */}
