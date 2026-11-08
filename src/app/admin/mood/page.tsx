@@ -59,7 +59,8 @@ export default function MoodPage() {
       label: info.label,
       note: note || null,
       is_public: isPublic,
-      logged_at: new Date(logDate).toISOString(),
+      // Parse as local noon to avoid UTC offset shifting the date back a day
+      logged_at: new Date(`${logDate}T12:00:00`).toISOString(),
     })
     if (error) { toast.error(error.message) }
     else { toast.success('Mood logged'); setNote(''); await load() }
