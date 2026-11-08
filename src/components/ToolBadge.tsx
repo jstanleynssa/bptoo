@@ -9,7 +9,7 @@ interface ToolBadgeProps {
   size?: 'sm' | 'md'
 }
 
-function BadgeContent({ tool, dim, fontSize }: { tool: Tool; dim: number; fontSize: number }) {
+function BadgeContent({ tool, dim, fontSize, forTooltip }: { tool: Tool; dim: number; fontSize: number; forTooltip?: boolean }) {
   if (tool.abbr && tool.bg) {
     return (
       <span
@@ -20,6 +20,39 @@ function BadgeContent({ tool, dim, fontSize }: { tool: Tool; dim: number; fontSi
       </span>
     )
   }
+
+  // For tooltip: use Clearbit full logo; for badge: use favicon
+  if (tool.domain && forTooltip) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={`https://logo.clearbit.com/${tool.domain}`}
+        alt={tool.label}
+        style={{ width: dim, height: dim, objectFit: 'contain', borderRadius: 10, background: 'white', padding: 4 }}
+        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+      />
+    )
+  }
+
+  if (tool.domain && !forTooltip) {
+    // Small badge: favicon + label
+    return (
+      <span
+        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-medium border ${dim <= 24 ? 'text-[10px] px-2 py-0.5 gap-1' : 'text-xs'}`}
+        style={{ borderColor: `${tool.color}50`, color: tool.color, backgroundColor: `${tool.color}18` }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`https://www.google.com/s2/favicons?domain=${tool.domain}&sz=32`}
+          alt=""
+          style={{ width: dim <= 24 ? 12 : 16, height: dim <= 24 ? 12 : 16, objectFit: 'contain', borderRadius: 2 }}
+          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+        />
+        <span>{tool.label}</span>
+      </span>
+    )
+  }
+
   return (
     <span
       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-medium border ${dim <= 24 ? 'text-[10px] px-2 py-0.5 gap-1' : 'text-xs'}`}
@@ -75,19 +108,7 @@ export default function ToolBadge({ toolId, size = 'md' }: ToolBadgeProps) {
             >
               {/* Icon left — real logo if domain available, otherwise badge */}
               <div className="shrink-0">
-                {tool.domain && !tool.abbr ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={`https://logo.clearbit.com/${tool.domain}`}
-                    alt={tool.label}
-                    width={40} height={40}
-                    className="rounded-xl object-contain bg-white"
-                    style={{ width: 40, height: 40 }}
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-                  />
-                ) : (
-                  <BadgeContent tool={tool} dim={40} fontSize={15} />
-                )}
+                <BadgeContent tool={tool} dim={40} fontSize={15} forTooltip />
               </div>
               {/* Name + description right */}
               <div>
