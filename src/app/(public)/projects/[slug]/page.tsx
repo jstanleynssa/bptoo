@@ -116,9 +116,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       {project.content && (
         <ContentRenderer
           html={project.content}
-          onVideoPlay={async () => {
-            await fetch(`/api/projects/${project.slug}/play`, { method: 'POST' }).catch(() => {})
-          }}
+          videoPlaySlug={project.slug}
           className="prose prose-invert prose-zinc max-w-none mb-16
             prose-headings:font-bold
             prose-a:text-[#FACD40] prose-a:no-underline hover:prose-a:underline

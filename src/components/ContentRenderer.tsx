@@ -102,9 +102,14 @@ interface ContentRendererProps {
   html: string
   className?: string
   onVideoPlay?: () => void
+  videoPlaySlug?: string  // pass slug to auto-call the play API
 }
 
-export default function ContentRenderer({ html, className, onVideoPlay }: ContentRendererProps) {
+export default function ContentRenderer({ html, className, onVideoPlay, videoPlaySlug }: ContentRendererProps) {
+  const handleVideoPlay = onVideoPlay ?? (videoPlaySlug
+    ? () => { fetch(`/api/projects/${videoPlaySlug}/play`, { method: 'POST' }).catch(() => {}) }
+    : undefined
+  )
   const [lightbox, setLightbox] = useState<{ src: string; srcs: string[] } | null>(null)
 
   const options: HTMLReactParserOptions = {
@@ -178,7 +183,7 @@ export default function ContentRenderer({ html, className, onVideoPlay }: Conten
         const videoCaptionHref = domNode.attribs['data-caption-href'] ?? ''
         return (
           <>
-            <VideoRenderer src={src} onPlay={onVideoPlay} />
+            <VideoRenderer src={src} onPlay={handleVideoPlay} />
             {videoCaption && (
               <p className="text-center text-sm italic opacity-50 -mt-4 mb-6">
                 {videoCaptionHref
