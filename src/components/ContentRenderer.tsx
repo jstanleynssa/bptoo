@@ -46,13 +46,13 @@ function videoEmbedUrl(url: string): string | null {
   return url
 }
 
-function VideoRenderer({ src }: { src: string }) {
+function VideoRenderer({ src, onPlay }: { src: string; onPlay?: () => void }) {
   const embed = videoEmbedUrl(src)
   if (!embed) return null
   return (
     <div className="my-8 not-prose">
       {src.match(/\.(mp4|webm|ogg)$/i) ? (
-        <video controls className="w-full rounded-2xl aspect-video bg-black">
+        <video controls className="w-full rounded-2xl aspect-video bg-black" onPlay={onPlay}>
           <source src={embed} />
         </video>
       ) : (
@@ -101,9 +101,10 @@ function ImageGridRenderer({ srcs, cols, ratio, onImageClick }: { srcs: string[]
 interface ContentRendererProps {
   html: string
   className?: string
+  onVideoPlay?: () => void
 }
 
-export default function ContentRenderer({ html, className }: ContentRendererProps) {
+export default function ContentRenderer({ html, className, onVideoPlay }: ContentRendererProps) {
   const [lightbox, setLightbox] = useState<{ src: string; srcs: string[] } | null>(null)
 
   const options: HTMLReactParserOptions = {
@@ -177,7 +178,7 @@ export default function ContentRenderer({ html, className }: ContentRendererProp
         const videoCaptionHref = domNode.attribs['data-caption-href'] ?? ''
         return (
           <>
-            <VideoRenderer src={src} />
+            <VideoRenderer src={src} onPlay={onVideoPlay} />
             {videoCaption && (
               <p className="text-center text-sm italic opacity-50 -mt-4 mb-6">
                 {videoCaptionHref

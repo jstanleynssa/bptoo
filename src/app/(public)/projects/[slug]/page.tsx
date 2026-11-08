@@ -6,6 +6,7 @@ import { ArrowLeft, ExternalLink, Download } from 'lucide-react'
 import ToolBadge from '@/components/ToolBadge'
 import { format } from 'date-fns'
 import ContentRenderer from '@/components/ContentRenderer'
+import VideoPlayTracker from '@/components/VideoPlayTracker'
 import CommentsSection from '@/components/CommentsSection'
 import type { Project } from '@/lib/types'
 
@@ -118,9 +119,16 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
       {embedUrl && (
         <section className="mb-16">
-          <h2 className="text-2xl text-white mb-5" style={{ fontFamily: 'Peralta, serif' }}>Video</h2>
+          <div className="flex items-baseline justify-between mb-5">
+            <h2 className="text-2xl text-white" style={{ fontFamily: 'Peralta, serif' }}>Video</h2>
+            {project.video_plays > 0 && (
+              <span className="text-sm text-white/40">▶ {project.video_plays.toLocaleString()} {project.video_plays === 1 ? 'play' : 'plays'}</span>
+            )}
+          </div>
           {project.video_url?.match(/\.(mp4|webm|ogg)$/i) ? (
-            <video controls className="w-full rounded-2xl aspect-video bg-black"><source src={embedUrl} /></video>
+            <VideoPlayTracker slug={project.slug}>
+              <video controls className="w-full rounded-2xl aspect-video bg-black"><source src={embedUrl} /></video>
+            </VideoPlayTracker>
           ) : (
             <iframe src={embedUrl} className="w-full aspect-video rounded-2xl"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
