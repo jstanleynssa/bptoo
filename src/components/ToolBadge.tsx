@@ -116,17 +116,17 @@ export default function ToolBadge({ toolId, size = 'md' }: ToolBadgeProps) {
           >
             <div
               className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-white/10 shadow-2xl"
-              style={{ backgroundColor: '#18181b', maxWidth: 220 }}
+              style={{ backgroundColor: '#18181b', width: 210 }}
             >
               {/* Icon left */}
               <div className="shrink-0">
                 <TooltipLogo tool={tool} dim={40} />
               </div>
-              {/* Name + description right */}
-              <div>
-                <p className="text-xs font-semibold text-white/90 leading-tight">{tool.label}</p>
+              {/* Name + description right — constrained so text wraps inside bubble */}
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <p className="text-xs font-semibold text-white/90 leading-tight break-words">{tool.label}</p>
                 {tool.description && (
-                  <p className="text-[11px] text-white/50 leading-snug mt-0.5">{tool.description}</p>
+                  <p className="text-[11px] text-white/50 leading-snug mt-0.5 break-words">{tool.description}</p>
                 )}
               </div>
             </div>
