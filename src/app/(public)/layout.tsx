@@ -39,6 +39,9 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         {children}
       </main>
 
+      <p className="text-center text-white/40 text-sm pb-2" style={{ fontFamily: 'Peralta, serif' }}>
+        Bipolar, too. And a whole lot more.
+      </p>
       <div className="h-2 w-full bg-[#FACD40]" />
       <footer className="max-w-5xl mx-auto px-6 py-10 flex items-center justify-between text-white/30 text-sm">
         <span style={{ fontFamily: 'Peralta, serif' }} className="text-white/60">bptoo</span>
