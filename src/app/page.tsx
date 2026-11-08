@@ -70,13 +70,16 @@ export default async function HomePage() {
           <p className="text-sm text-black/65 leading-relaxed mb-3">
             Hey — I'm Jason. I'm a husband and dad. I'm also an entrepreneur, builder,
             marketer, writer, and creative based in North Carolina. If I had to narrow
-            that down to one word I would call myself a designer.
+            that down to one word I would call myself a designer. I made this site to
+            share the things I produce.
           </p>
           <p className="text-sm text-black/65 leading-relaxed">
-            I have Bipolar II, and I've spent a long time going from ashamed of that to
-            feeling like I should be proud of how it shapes the way I think and make things.
-            This site is a step forward in that journey. I created it to share my thoughts
-            and thought processes, and the results, which may or may not be completely finished.
+            I live somewhere between Cyclothymia and Bipolar II — clinically speaking.
+            More on that in a bit. I've spent a long time feeling like that was something
+            I needed to hide to feeling like I should be proud of how it shapes the way I
+            think and make things. This site is a step forward in that journey. I created
+            it to share my thoughts and thought processes, and the results, which may or
+            may not be completely finished.
           </p>
         </LineRevealBlock>
 
@@ -87,22 +90,19 @@ export default async function HomePage() {
           <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/waves-ink.png"
             alt="Wave frequency" className="w-full mb-5" style={{ mixBlendMode: 'multiply', display: 'block' }} />
           <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/35 mb-3">The thing itself</p>
-          <h2 className="text-2xl text-black mb-4 leading-snug" style={{ fontFamily: 'Peralta, serif' }}>What exactly is Bipolar II?</h2>
+          <h2 className="text-2xl text-black mb-4 leading-snug" style={{ fontFamily: 'Peralta, serif' }}>What exactly is Bipolar II and Cyclothymia?</h2>
           <p className="text-sm text-black/65 leading-relaxed mb-4">
-            Bipolar II means recurring depression and at least one hypomanic episode — elevated
-            mood that's real and intense, but short of full mania. That's the clinical definition.
-            If I had to describe it: imagine surfing a long swell — you don't go very high or low,
-            and you generally feel despondent. There is a fair bit of distance between the peaks.
-            Then the frequency and amplitude of the waves increase, and now you are really surfing,
-            cutting it up — it feels fulfilling. Then the waves slow down again, and you're back.
+            Bipolar II means recurring depression and at least one hypomanic episode: elevated
+            mood that's real and intense, but short of full mania. Cyclothymia lives a step
+            below that — milder highs, milder lows, but the cycling is still there, still real,
+            still doing its thing. My experience lands somewhere in between.
           </p>
           <p className="text-sm text-black/65 leading-relaxed mb-4">
-            People sometimes assume Bipolar II is just a lighter version of Bipolar I. It isn't.
-            Both involve swings between depression and elevated mood, but the pattern is different.
-            In Bipolar I, the highs (mania) run bigger and can land someone in the hospital. In
-            Bipolar II, the highs (hypomania) are smaller and shorter, but the lows tend to last
-            longer and come back more often. Different waves, same ocean. And neither fits the
-            "crazy" stereotype. Most of us are managing it quietly, every day, and doing just fine.
+            If I had to describe it: imagine surfing a long swell — you don't go very high or
+            low, and you generally feel despondent. There is a fair bit of distance between the
+            peaks. Then the frequency and amplitude of the waves increase, and now you are really
+            surfing, cutting it up — it feels fulfilling. Then the waves slow down again, and
+            you're back.
           </p>
           <p className="text-sm text-black/65 leading-relaxed">
             The same wiring that makes the lows hard makes the highs remarkably generative.
@@ -202,13 +202,13 @@ export default async function HomePage() {
           <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-2">Introduction</p>
           <h2 className="text-2xl text-black mb-4" style={{ fontFamily: 'Peralta, serif' }}>Nice to meet ya.</h2>
           <p className="text-sm text-black/65 leading-relaxed mb-3">
-            Hey — I'm Jason. I'm a husband and dad. I'm also an entrepreneur, builder,
-            marketer, writer, and creative based in North Carolina. If I had to narrow
-            that down to one word I would call myself a designer.
+            Hey — I'm Jason. A husband, dad, entrepreneur, builder, and creative based
+            in North Carolina. If I had to narrow that down to one word: designer.
           </p>
           <p className="text-sm text-black/65 leading-relaxed">
-            I have Bipolar II, and I've spent a long time going from ashamed of that to
-            feeling like I should be proud of how it shapes the way I think and make things.
+            I live somewhere between Cyclothymia and Bipolar II — clinically speaking.
+            I've spent a long time feeling like that was something to hide. This site is
+            me deciding otherwise.
           </p>
         </div>
 
@@ -221,16 +221,13 @@ export default async function HomePage() {
           <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-2">The thing itself</p>
           <h2 className="text-2xl text-black mb-4" style={{ fontFamily: 'Peralta, serif' }}>What exactly is Bipolar II?</h2>
           <p className="text-sm text-black/65 leading-relaxed mb-4">
-            Bipolar II means recurring depression and at least one hypomanic episode — elevated
-            mood that's real and intense, but short of full mania. Imagine surfing a long swell —
-            you don't go very high or low, and you generally feel despondent. Then the frequency
-            and amplitude of the waves increase, and now you are really surfing. Then the waves
-            slow down again, and you're back.
+            Bipolar II means recurring depression and at least one hypomanic episode. Cyclothymia
+            is a step below — milder highs and lows, but the cycling is still real. My experience
+            lands somewhere in between.
           </p>
           <p className="text-sm text-black/65 leading-relaxed">
-            People sometimes assume Bipolar II is a lighter version of Bipolar I. It isn't.
-            Different waves, same ocean. And neither fits the "crazy" stereotype. Most of us are
-            managing it quietly, every day, and doing just fine. The same wiring that makes the
+            Imagine surfing a long swell — despondent, not moving much. Then the waves pick up,
+            and now you're really surfing. Then they slow again. The same wiring that makes the
             lows hard makes the highs remarkably generative.
           </p>
         </div>
