@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, ReactNode } from 'react'
+import { useEffect, useRef, ReactNode } from 'react'
 
 interface VideoPlayTrackerProps {
   slug: string
@@ -8,16 +8,28 @@ interface VideoPlayTrackerProps {
 }
 
 export default function VideoPlayTracker({ slug, children }: VideoPlayTrackerProps) {
+  const wrapperRef = useRef<HTMLDivElement>(null)
   const tracked = useRef(false)
 
-  function handlePlay() {
-    if (tracked.current) return // only count first play per page load
-    tracked.current = true
-    fetch(`/api/projects/${slug}/play`, { method: 'POST' }).catch(() => {})
-  }
+  useEffect(() => {
+    const wrapper = wrapperRef.current
+    if (!wrapper) return
+
+    const video = wrapper.querySelector('video')
+    if (!video) return
+
+    function handlePlay() {
+      if (tracked.current) return // only count first play per page load
+      tracked.current = true
+      fetch(`/api/projects/${slug}/play`, { method: 'POST' }).catch(() => {})
+    }
+
+    video.addEventListener('play', handlePlay)
+    return () => video.removeEventListener('play', handlePlay)
+  }, [slug])
 
   return (
-    <div onPlay={handlePlay} style={{ display: 'contents' }}>
+    <div ref={wrapperRef}>
       {children}
     </div>
   )
