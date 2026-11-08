@@ -76,6 +76,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       </h1>
       {project.description && <p className="text-xl text-white/60 leading-relaxed mb-6">{project.description}</p>}
 
+      {/* Play counter — shows whether video is in tab or content */}
+      {(project.video_plays ?? 0) >= 0 && (project.video_url || project.content?.includes('data-video-embed')) && (
+        <div className="mb-4">
+          <span className="text-sm text-white/40">▶ {(project.video_plays ?? 0).toLocaleString()} {project.video_plays === 1 ? 'play' : 'plays'}</span>
+        </div>
+      )}
+
       {/* Tools used */}
       {project.tools?.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-8">
@@ -109,6 +116,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       {project.content && (
         <ContentRenderer
           html={project.content}
+          onVideoPlay={async () => {
+            await fetch(`/api/projects/${project.slug}/play`, { method: 'POST' }).catch(() => {})
+          }}
           className="prose prose-invert prose-zinc max-w-none mb-16
             prose-headings:font-bold
             prose-a:text-[#FACD40] prose-a:no-underline hover:prose-a:underline
@@ -119,10 +129,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
       {embedUrl && (
         <section className="mb-16">
-          <div className="flex items-baseline justify-between mb-5">
-            <h2 className="text-2xl text-white" style={{ fontFamily: 'Peralta, serif' }}>Video</h2>
-            <span className="text-sm text-white/40">▶ {(project.video_plays ?? 0).toLocaleString()} {project.video_plays === 1 ? 'play' : 'plays'}</span>
-          </div>
+          <h2 className="text-2xl text-white mb-5" style={{ fontFamily: 'Peralta, serif' }}>Video</h2>
           {project.video_url?.match(/\.(mp4|webm|ogg)$/i) ? (
             <VideoPlayTracker slug={project.slug}>
               <video controls className="w-full rounded-2xl aspect-video bg-black"><source src={embedUrl} /></video>
