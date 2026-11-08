@@ -193,9 +193,15 @@ export default function ContentRenderer({ html, className }: ContentRendererProp
       if (domNode.attribs?.['data-image-grid'] !== undefined) {
         const srcsRaw = domNode.attribs['data-srcs'] ?? '[]'
         const cols = parseInt(domNode.attribs['data-cols'] ?? '2')
+        const ratio = domNode.attribs['data-ratio'] ?? 'sq'
         try {
-          const srcs: string[] = JSON.parse(srcsRaw)
-          const ratio = domNode.attribs['data-ratio'] ?? 'sq'
+          const parsed = JSON.parse(srcsRaw)
+          // Handle double-encoded string (comma-separated) or proper JSON array
+          const srcs: string[] = Array.isArray(parsed)
+            ? parsed
+            : typeof parsed === 'string'
+              ? parsed.split(',').map(s => s.trim()).filter(Boolean)
+              : []
           return <ImageGridRenderer srcs={srcs} cols={cols} ratio={ratio} onImageClick={(src, all) => setLightbox({ src, srcs: all })} />
         } catch { return <></> }
       }
