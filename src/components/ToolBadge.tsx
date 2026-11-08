@@ -4,12 +4,37 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TOOL_MAP, type Tool } from '@/lib/tools'
 
+function TooltipLogo({ tool, dim }: { tool: Tool; dim: number }) {
+  const [failed, setFailed] = useState(false)
+
+  if (tool.abbr && tool.bg) {
+    return <BadgeContent tool={tool} dim={dim} fontSize={Math.round(dim * 0.37)} />
+  }
+
+  if (tool.domain && !failed) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={`https://www.google.com/s2/favicons?domain=${tool.domain}&sz=128`}
+        alt={tool.label}
+        style={{ width: dim, height: dim, objectFit: 'contain', borderRadius: 10, background: 'white', padding: 4 }}
+        onError={() => setFailed(true)}
+      />
+    )
+  }
+
+  // Emoji fallback
+  return (
+    <span style={{ fontSize: dim * 0.7, lineHeight: 1 }}>{tool.emoji ?? '🔧'}</span>
+  )
+}
+
 interface ToolBadgeProps {
   toolId: string
   size?: 'sm' | 'md'
 }
 
-function BadgeContent({ tool, dim, fontSize, forTooltip }: { tool: Tool; dim: number; fontSize: number; forTooltip?: boolean }) {
+function BadgeContent({ tool, dim, fontSize }: { tool: Tool; dim: number; fontSize: number }) {
   if (tool.abbr && tool.bg) {
     return (
       <span
@@ -21,20 +46,7 @@ function BadgeContent({ tool, dim, fontSize, forTooltip }: { tool: Tool; dim: nu
     )
   }
 
-  // For tooltip: use Clearbit full logo; for badge: use favicon
-  if (tool.domain && forTooltip) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={`https://logo.clearbit.com/${tool.domain}`}
-        alt={tool.label}
-        style={{ width: dim, height: dim, objectFit: 'contain', borderRadius: 10, background: 'white', padding: 4 }}
-        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-      />
-    )
-  }
-
-  if (tool.domain && !forTooltip) {
+  if (tool.domain) {
     // Small badge: favicon + label
     return (
       <span
@@ -106,9 +118,9 @@ export default function ToolBadge({ toolId, size = 'md' }: ToolBadgeProps) {
               className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-white/10 shadow-2xl"
               style={{ backgroundColor: '#18181b', maxWidth: 220 }}
             >
-              {/* Icon left — real logo if domain available, otherwise badge */}
+              {/* Icon left */}
               <div className="shrink-0">
-                <BadgeContent tool={tool} dim={40} fontSize={15} forTooltip />
+                <TooltipLogo tool={tool} dim={40} />
               </div>
               {/* Name + description right */}
               <div>
