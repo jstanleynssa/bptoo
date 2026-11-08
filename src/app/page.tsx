@@ -63,7 +63,7 @@ export default async function HomePage() {
           style={{ position: 'absolute', top: `${BLOCK_Y[0]}px`, transform: 'translateY(-50%)', width: `${BLOCK_W}px`, right: `calc(50% + ${SVG_W / 2 + GAP}px)` }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/jason-stanley-ink.png"
-            alt="Jason Stanley" className="w-full mb-5" style={{ mixBlendMode: 'multiply', display: 'block' }} />
+            alt="Jason Stanley" className="w-1/2 mx-auto block mb-5 rounded-xl" />
           <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/35 mb-3">Introduction</p>
           <h2 className="text-2xl text-black mb-4 leading-snug" style={{ fontFamily: 'Peralta, serif' }}>Nice to meet ya.</h2>
           <p className="text-sm text-black/65 leading-relaxed mb-3">
@@ -84,7 +84,7 @@ export default async function HomePage() {
           style={{ position: 'absolute', top: `${BLOCK_Y[1]}px`, transform: 'translateY(-50%)', width: `${BLOCK_W}px`, left: `calc(50% + ${SVG_W / 2 + GAP}px)` }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/waves-ink.png"
-            alt="Wave frequency" className="w-full mb-5" style={{ mixBlendMode: 'multiply', display: 'block' }} />
+            alt="Wave frequency" className="w-1/2 mx-auto block mb-5 rounded-xl" />
           <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/35 mb-3">The thing itself</p>
           <h2 className="text-2xl text-black mb-4 leading-snug" style={{ fontFamily: 'Peralta, serif' }}>What exactly is Bipolar II?</h2>
           <p className="text-sm text-black/65 leading-relaxed mb-4">
@@ -109,7 +109,7 @@ export default async function HomePage() {
           style={{ position: 'absolute', top: `${BLOCK_Y[2]}px`, transform: 'translateY(-50%)', width: `${BLOCK_W}px`, right: `calc(50% + ${SVG_W / 2 + GAP}px)` }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/tree-ink.png"
-            alt="Tree" className="w-full mb-5" style={{ mixBlendMode: 'multiply', display: 'block' }} />
+            alt="Tree" className="w-1/2 mx-auto block mb-5 rounded-xl" />
           <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/35 mb-3">Creative life</p>
           <h2 className="text-2xl text-black mb-4 leading-snug" style={{ fontFamily: 'Peralta, serif' }}>What I direct my creativity towards.</h2>
           <p className="text-sm text-black/65 leading-relaxed mb-4">
