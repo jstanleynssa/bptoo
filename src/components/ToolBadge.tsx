@@ -73,9 +73,21 @@ export default function ToolBadge({ toolId, size = 'md' }: ToolBadgeProps) {
               className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-white/10 shadow-2xl"
               style={{ backgroundColor: '#18181b', maxWidth: 220 }}
             >
-              {/* Icon left */}
+              {/* Icon left — real logo if domain available, otherwise badge */}
               <div className="shrink-0">
-                <BadgeContent tool={tool} dim={40} fontSize={15} />
+                {tool.domain && !tool.abbr ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={`https://logo.clearbit.com/${tool.domain}`}
+                    alt={tool.label}
+                    width={40} height={40}
+                    className="rounded-xl object-contain bg-white"
+                    style={{ width: 40, height: 40 }}
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                  />
+                ) : (
+                  <BadgeContent tool={tool} dim={40} fontSize={15} />
+                )}
               </div>
               {/* Name + description right */}
               <div>
