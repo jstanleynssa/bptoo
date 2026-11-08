@@ -173,7 +173,20 @@ export default function ContentRenderer({ html, className }: ContentRendererProp
       // Video embed
       if (domNode.attribs?.['data-video-embed'] !== undefined) {
         const src = domNode.attribs['data-src'] ?? ''
-        return <VideoRenderer src={src} />
+        const videoCaption = domNode.attribs['data-caption'] ?? ''
+        const videoCaptionHref = domNode.attribs['data-caption-href'] ?? ''
+        return (
+          <>
+            <VideoRenderer src={src} />
+            {videoCaption && (
+              <p className="text-center text-sm italic opacity-50 -mt-4 mb-6">
+                {videoCaptionHref
+                  ? <a href={videoCaptionHref} target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80 transition-opacity">{videoCaption}</a>
+                  : videoCaption}
+              </p>
+            )}
+          </>
+        )
       }
 
       // Image grid

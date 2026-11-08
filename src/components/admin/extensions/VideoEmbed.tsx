@@ -3,7 +3,7 @@
 import { Node, mergeAttributes } from '@tiptap/core'
 import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
 import { useState } from 'react'
-import { X, Video, Check } from 'lucide-react'
+import { X, Video, Check, Link as LinkIcon } from 'lucide-react'
 
 function embedUrl(url: string): string | null {
   if (!url) return null
@@ -19,7 +19,10 @@ import type { ReactNodeViewProps } from '@tiptap/react'
 function VideoEmbedView({ node, updateAttributes, deleteNode }: ReactNodeViewProps) {
   const [editing, setEditing] = useState(!(node.attrs.src as string))
   const [draft, setDraft] = useState((node.attrs.src as string) ?? '')
+  const [showLink, setShowLink] = useState(!!(node.attrs.captionHref as string))
   const url = node.attrs.src as string
+  const caption = node.attrs.caption as string
+  const captionHref = node.attrs.captionHref as string
   const embed = embedUrl(url)
 
   function commit() {
@@ -70,6 +73,36 @@ function VideoEmbedView({ node, updateAttributes, deleteNode }: ReactNodeViewPro
             Click to add a video URL
           </div>
         )}
+
+        {/* Caption */}
+        <div className="px-3 pb-3">
+          <div className="flex items-center gap-1">
+            <input
+              type="text"
+              value={caption ?? ''}
+              onChange={e => updateAttributes({ caption: e.target.value })}
+              placeholder="Caption (optional)…"
+              className="flex-1 bg-transparent text-center text-sm text-zinc-500 italic placeholder-zinc-700 focus:outline-none focus:text-zinc-300"
+            />
+            <button
+              type="button"
+              onClick={() => setShowLink(l => !l)}
+              className={`p-1 rounded transition-colors ${showLink || captionHref ? 'text-violet-400' : 'text-zinc-700 hover:text-zinc-500'}`}
+              title="Add link to caption"
+            >
+              <LinkIcon size={12} />
+            </button>
+          </div>
+          {(showLink || captionHref) && (
+            <input
+              type="url"
+              value={captionHref ?? ''}
+              onChange={e => updateAttributes({ captionHref: e.target.value })}
+              placeholder="Caption link URL (optional)…"
+              className="mt-1 w-full bg-transparent text-center text-xs text-violet-400/60 placeholder-zinc-700 focus:outline-none focus:text-violet-400"
+            />
+          )}
+        </div>
       </div>
     </NodeViewWrapper>
   )
@@ -79,17 +112,23 @@ export const VideoEmbedNode = Node.create({
   name: 'videoEmbed',
   group: 'block',
   atom: true,
-  addAttributes() { return { src: { default: '' } } },
+  addAttributes() { return { src: { default: '' }, caption: { default: '' }, captionHref: { default: '' } } },
   parseHTML() {
     return [{
       tag: 'div[data-video-embed]',
-      getAttrs: (dom: HTMLElement) => ({ src: dom.getAttribute('data-src') || '' }),
+      getAttrs: (dom: HTMLElement) => ({
+        src: dom.getAttribute('data-src') || '',
+        caption: dom.getAttribute('data-caption') || '',
+        captionHref: dom.getAttribute('data-caption-href') || '',
+      }),
     }]
   },
   renderHTML({ HTMLAttributes, node }) {
     return ['div', mergeAttributes(HTMLAttributes, {
       'data-video-embed': '',
       'data-src': node.attrs.src,
+      'data-caption': node.attrs.caption || '',
+      'data-caption-href': node.attrs.captionHref || '',
     })]
   },
   addNodeView() {
