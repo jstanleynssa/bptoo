@@ -43,6 +43,7 @@ export const TOOLS: Tool[] = [
   { id: 'imagineart',   label: 'ImagineArt',   emoji: '🌟',  color: '#FF6B6B', domain: 'imagineart.ai',         description: 'AI image generation platform' },
   { id: 'seedream',     label: 'Seedream',     emoji: '🌱',  color: '#4ECDC4', domain: 'seedream.ai',           description: 'AI image & video generation model' },
   { id: 'gptimage',     label: 'GPT Image',    emoji: '🖼️', color: '#10A37F', domain: 'openai.com',            description: "OpenAI's AI image generation" },
+  { id: 'nanobanana',   label: 'Nano Banana',  emoji: '🍌',  color: '#FFD93D',                               description: 'AI image generation model' },
   // ── Dev / design ─────────────────────────────────────────────────────────
   { id: 'code',         label: 'Custom Code',  emoji: '💻',  color: '#4B9CE2',                               description: 'Hand-written software & scripting' },
   { id: 'figma',        label: 'Figma',        emoji: '🎯',  color: '#F24E1E', domain: 'figma.com',          description: 'Collaborative UI design & prototyping' },
