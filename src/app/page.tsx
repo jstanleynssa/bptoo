@@ -96,12 +96,19 @@ export default async function HomePage() {
             Then the frequency and amplitude of the waves increase, and now you are really surfing,
             cutting it up — it feels fulfilling. Then the waves slow down again, and you're back.
           </p>
+          <p className="text-sm text-black/65 leading-relaxed mb-4">
+            People sometimes assume Bipolar II is just a lighter version of Bipolar I. It isn't.
+            Both involve swings between depression and elevated mood, but the pattern is different.
+            In Bipolar I, the highs (mania) run bigger and can land someone in the hospital. In
+            Bipolar II, the highs (hypomania) are smaller and shorter, but the lows tend to last
+            longer and come back more often. Different waves, same ocean. And neither fits the
+            "crazy" stereotype. Most of us are managing it quietly, every day, and doing just fine.
+          </p>
           <p className="text-sm text-black/65 leading-relaxed">
-            It's not a lighter version of Bipolar I. The same wiring that makes the lows hard
-            makes the highs remarkably generative. I may make connections others miss. I get
-            genuinely obsessed with ideas. I feel things deeply enough to make work that means
-            something to me — half the time I'll do something just for my own edification.
-            Frequently those are the most rewarding projects.
+            The same wiring that makes the lows hard makes the highs remarkably generative.
+            I may make connections others miss. I get genuinely obsessed with ideas. I feel things
+            deeply enough to make work that means something to me — half the time I'll do something
+            just for my own edification. Often those are the most rewarding projects.
           </p>
         </LineRevealBlock>
 
@@ -213,11 +220,18 @@ export default async function HomePage() {
             alt="Wave frequency" className="w-1/2 mx-auto block mb-5 rounded-xl" />
           <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-2">The thing itself</p>
           <h2 className="text-2xl text-black mb-4" style={{ fontFamily: 'Peralta, serif' }}>What exactly is Bipolar II?</h2>
-          <p className="text-sm text-black/65 leading-relaxed">
+          <p className="text-sm text-black/65 leading-relaxed mb-4">
             Bipolar II means recurring depression and at least one hypomanic episode — elevated
-            mood that's real and intense, but short of full mania. The same wiring that makes
-            the lows hard makes the highs remarkably generative. I may make connections others
-            miss. I get genuinely obsessed with ideas.
+            mood that's real and intense, but short of full mania. Imagine surfing a long swell —
+            you don't go very high or low, and you generally feel despondent. Then the frequency
+            and amplitude of the waves increase, and now you are really surfing. Then the waves
+            slow down again, and you're back.
+          </p>
+          <p className="text-sm text-black/65 leading-relaxed">
+            People sometimes assume Bipolar II is a lighter version of Bipolar I. It isn't.
+            Different waves, same ocean. And neither fits the "crazy" stereotype. Most of us are
+            managing it quietly, every day, and doing just fine. The same wiring that makes the
+            lows hard makes the highs remarkably generative.
           </p>
         </div>
 
