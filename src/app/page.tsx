@@ -70,16 +70,15 @@ export default async function HomePage() {
           <p className="text-sm text-black/65 leading-relaxed mb-3">
             Hey — I'm Jason. I'm a husband and dad. I'm also an entrepreneur, builder,
             marketer, writer, and creative based in North Carolina. If I had to narrow
-            that down to one word I would call myself a designer. I made this site to
-            share the things I produce.
+            that down to one word I would call myself a designer.
           </p>
           <p className="text-sm text-black/65 leading-relaxed">
-            I live somewhere between Cyclothymia and Bipolar II — clinically speaking.
-            More on that in a bit. I've spent a long time feeling like that was something
-            I needed to hide to feeling like I should be proud of how it shapes the way I
-            think and make things. This site is a step forward in that journey. I created
-            it to share my thoughts and thought processes, and the results, which may or
-            may not be completely finished.
+            One of the things I want to share on this site is that I live somewhere
+            between Cyclothymia and Bipolar II — clinically speaking. I've spent a long
+            time feeling like that was something I needed to hide to feeling like I should
+            be proud of how it shapes the way I think and make things. This site is a step
+            forward in that journey. I created it to share my thoughts and thought
+            processes, and the results, which may or may not be completely finished.
           </p>
         </LineRevealBlock>
 
