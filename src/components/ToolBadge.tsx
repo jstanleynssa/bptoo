@@ -75,8 +75,13 @@ export default function ToolBadge({ toolId, size = 'md' }: ToolBadgeProps) {
             >
               {/* Large badge in tooltip */}
               <BadgeContent tool={tool} dim={48} fontSize={18} />
-              {/* Tool name */}
+              {/* Tool name + description */}
               <span className="text-xs font-semibold text-white/80">{tool.label}</span>
+              {tool.description && (
+                <span className="text-[11px] text-white/50 text-center leading-tight" style={{ maxWidth: 140 }}>
+                  {tool.description}
+                </span>
+              )}
             </div>
             {/* Arrow */}
             <div className="flex justify-center">
