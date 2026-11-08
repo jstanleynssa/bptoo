@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {
   title: { default: 'bptoo', template: '%s | bptoo' },
-  description: 'Ideas, art, and the creative chaos of a bipolar mind.',
+  description: 'Ideas, art, and the creative chaos of no brakes brain.',
   metadataBase: new URL('https://bptoo.com'),
   openGraph: {
     siteName: 'bptoo',
