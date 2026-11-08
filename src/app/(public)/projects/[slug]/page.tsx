@@ -121,9 +121,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         <section className="mb-16">
           <div className="flex items-baseline justify-between mb-5">
             <h2 className="text-2xl text-white" style={{ fontFamily: 'Peralta, serif' }}>Video</h2>
-            {project.video_plays > 0 && (
-              <span className="text-sm text-white/40">▶ {project.video_plays.toLocaleString()} {project.video_plays === 1 ? 'play' : 'plays'}</span>
-            )}
+            <span className="text-sm text-white/40">▶ {(project.video_plays ?? 0).toLocaleString()} {project.video_plays === 1 ? 'play' : 'plays'}</span>
           </div>
           {project.video_url?.match(/\.(mp4|webm|ogg)$/i) ? (
             <VideoPlayTracker slug={project.slug}>
