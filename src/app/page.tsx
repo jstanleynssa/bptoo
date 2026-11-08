@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { ArrowRight, ExternalLink } from 'lucide-react'
 import type { Post, Project, Category } from '@/lib/types'
 import SiteNav from '@/components/HomeHero'
+import MobileRevealLine from '@/components/MobileRevealLine'
 import RevealSVG from '@/components/RevealSVG'
 import LineRevealBlock from '@/components/LineRevealBlock'
 import AnimatedBlock from '@/components/AnimatedBlock'
@@ -172,10 +173,12 @@ export default async function HomePage() {
 
 
       {/* ── Mobile layout ── */}
-      <div className="md:hidden px-6 pb-16 space-y-12">
+      <div className="md:hidden relative pb-16 space-y-0">
+        {/* String runs behind content */}
+        <MobileRevealLine />
 
-        {/* Brain illustration — fixed-height container prevents the full SVG height from reserving space */}
-        <div className="flex justify-center pt-8 pb-4">
+        {/* Brain illustration */}
+        <div className="relative z-10 flex justify-center pt-8 pb-4" style={{ backgroundColor: '#FACD40' }}>
           <div style={{ width: '220px', height: '250px', overflow: 'hidden' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/hero.svg" alt="bptoo" style={{ width: '220px', height: 'auto' }} />
@@ -183,7 +186,7 @@ export default async function HomePage() {
         </div>
 
         {/* Block 1 */}
-        <div className="border-t border-black/10 pt-10">
+        <div className="relative z-10 px-6 pt-10 pb-10 border-t border-black/10" style={{ backgroundColor: '#FACD40' }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/jason-stanley-ink.png"
             alt="Jason Stanley" className="w-full mb-5" style={{ mixBlendMode: 'multiply' }} />
@@ -201,7 +204,7 @@ export default async function HomePage() {
         </div>
 
         {/* Block 2 */}
-        <div className="border-t border-black/10 pt-10">
+        <div className="relative z-10 px-6 pt-10 pb-10 border-t border-black/10" style={{ backgroundColor: '#FACD40' }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/waves-ink.png"
             alt="Wave frequency" className="w-full mb-5" style={{ mixBlendMode: 'multiply' }} />
@@ -216,7 +219,7 @@ export default async function HomePage() {
         </div>
 
         {/* Block 3 */}
-        <div className="border-t border-black/10 pt-10">
+        <div className="relative z-10 px-6 pt-10 pb-10 border-t border-black/10" style={{ backgroundColor: '#FACD40' }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/tree-ink.png"
             alt="Tree" className="w-full mb-5" style={{ mixBlendMode: 'multiply' }} />
@@ -231,7 +234,7 @@ export default async function HomePage() {
 
         {/* Latest post */}
         {latestPost && (
-          <div className="border-t border-black/10 pt-10">
+          <div className="relative z-10 px-6 pt-10 pb-10 border-t border-black/10" style={{ backgroundColor: '#FACD40' }}>
             <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-4">Latest post</p>
             <Link href={`/blog/${latestPost.slug}`} className="group block">
               {latestPost.cover_image_url && (
@@ -248,10 +251,9 @@ export default async function HomePage() {
           </div>
         )}
 
-        {/* Man at bottom */}
-        <div className="flex justify-center pt-4">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/man.svg" alt="A person" style={{ width: '120px', height: 'auto', mixBlendMode: 'multiply' }} />
+        {/* Man spacer — actual man rendered by MobileRevealLine */}
+        <div className="relative z-10 flex justify-center pt-4" style={{ height: '220px', backgroundColor: '#FACD40' }}>
+          {/* invisible placeholder for man.svg spacing */}
         </div>
       </div>
 
