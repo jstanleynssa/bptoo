@@ -12,6 +12,7 @@ import {
   Library,
   Activity,
   MessageSquare,
+  Home,
   Globe,
   LogOut,
 } from 'lucide-react'
@@ -25,6 +26,7 @@ const nav = [
   { href: '/admin/media', label: 'Media', icon: Library },
   { href: '/admin/mood', label: 'Mood', icon: Activity },
   { href: '/admin/comments', label: 'Comments', icon: MessageSquare },
+  { href: '/admin/homepage', label: 'Homepage', icon: Home },
 ]
 
 export default function AdminSidebar() {

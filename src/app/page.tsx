@@ -31,6 +31,13 @@ const GAP = 24
 export default async function HomePage() {
   const supabase = await createClient()
 
+  // Fetch editable homepage blocks
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: blocksData } = await (supabase.from('homepage_blocks') as any).select('*').order('id')
+  type HBlock = { id: number; label: string; heading: string; body_html: string }
+  const hpBlocks = (blocksData ?? []) as HBlock[]
+  const gb = (id: number): HBlock | undefined => hpBlocks.find(b => b.id === id)
+
   const [{ data: postsData }, { data: projectsData }] = await Promise.all([
     supabase.from('posts').select('id, title, slug, excerpt, cover_image_url, published_at, categories(name, color)')
       .eq('status', 'published').order('published_at', { ascending: false }).limit(3),
@@ -65,21 +72,9 @@ export default async function HomePage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/jason-stanley-ink.png"
             alt="Jason Stanley" className="w-full mb-5" style={{ mixBlendMode: 'multiply', display: 'block' }} />
-          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/35 mb-3">Introduction</p>
-          <h2 className="text-2xl text-black mb-4 leading-snug" style={{ fontFamily: 'Peralta, serif' }}>Nice to meet ya.</h2>
-          <p className="text-sm text-black/65 leading-relaxed mb-3">
-            Hey — I'm Jason. I'm a husband and dad. I'm also an entrepreneur, builder,
-            marketer, writer, and creative based in North Carolina. If I had to narrow
-            that down to one word I would call myself a designer.
-          </p>
-          <p className="text-sm text-black/65 leading-relaxed">
-            One of the things I want to share on this site is that I live somewhere
-            between Cyclothymia and Bipolar II — clinically speaking. I've spent a long
-            time feeling like that was something I needed to hide to feeling like I should
-            be proud of how it shapes the way I think and make things. This site is a step
-            forward in that journey. I created it to share my thoughts and thought
-            processes, and the results, which may or may not be completely finished.
-          </p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/35 mb-3">{gb(1)?.label ?? 'Introduction'}</p>
+          <h2 className="text-2xl text-black mb-4 leading-snug" style={{ fontFamily: 'Peralta, serif' }}>{gb(1)?.heading ?? 'Nice to meet ya.'}</h2>
+          <div dangerouslySetInnerHTML={{ __html: gb(1)?.body_html ?? '' }} className="text-sm text-black/65 leading-relaxed [&>p]:mb-3 [&>p:last-child]:mb-0" />
         </LineRevealBlock>
 
         {/* Block 2 — right */}
@@ -88,27 +83,9 @@ export default async function HomePage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/waves-ink.png"
             alt="Wave frequency" className="w-full mb-5" style={{ mixBlendMode: 'multiply', display: 'block' }} />
-          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/35 mb-3">The thing itself</p>
-          <h2 className="text-2xl text-black mb-4 leading-snug" style={{ fontFamily: 'Peralta, serif' }}>What exactly is Bipolar II and Cyclothymia?</h2>
-          <p className="text-sm text-black/65 leading-relaxed mb-4">
-            Bipolar II means recurring depression and at least one hypomanic episode: elevated
-            mood that's real and intense, but short of full mania. Cyclothymia lives a step
-            below that — milder highs, milder lows, but the cycling is still there, still real,
-            still doing its thing. My experience lands somewhere in between.
-          </p>
-          <p className="text-sm text-black/65 leading-relaxed mb-4">
-            If I had to describe it: imagine surfing a long swell — you don't go very high or
-            low, and you generally feel despondent. There is a fair bit of distance between the
-            peaks. Then the frequency and amplitude of the waves increase, and now you are really
-            surfing, cutting it up — it feels fulfilling. Then the waves slow down again, and
-            you're back.
-          </p>
-          <p className="text-sm text-black/65 leading-relaxed">
-            The same wiring that makes the lows hard makes the highs remarkably generative.
-            I may make connections others miss. I get genuinely obsessed with ideas. I feel things
-            deeply enough to make work that means something to me — half the time I'll do something
-            just for my own edification. Often those are the most rewarding projects.
-          </p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/35 mb-3">{gb(2)?.label ?? 'The thing itself'}</p>
+          <h2 className="text-2xl text-black mb-4 leading-snug" style={{ fontFamily: 'Peralta, serif' }}>{gb(2)?.heading ?? 'What exactly is Bipolar II and Cyclothymia?'}</h2>
+          <div dangerouslySetInnerHTML={{ __html: gb(2)?.body_html ?? '' }} className="text-sm text-black/65 leading-relaxed [&>p]:mb-3 [&>p:last-child]:mb-0" />
         </LineRevealBlock>
 
         {/* Block 3 — left */}
@@ -117,23 +94,9 @@ export default async function HomePage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/tree-ink.png"
             alt="Tree" className="w-full mb-5" style={{ mixBlendMode: 'multiply', display: 'block' }} />
-          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/35 mb-3">Creative life</p>
-          <h2 className="text-2xl text-black mb-4 leading-snug" style={{ fontFamily: 'Peralta, serif' }}>What I direct my creativity towards.</h2>
-          <p className="text-sm text-black/65 leading-relaxed mb-4">
-            All directions, honestly. Projects for my kids and family. Things for the
-            other roles in my life: coaching, leading Scouts, running a business.
-            I read, write, draw (not very well), work in Photoshop (pretty well),
-            make videos, and follow my brain down rabbit holes. Business concepts and
-            solutions to problems no one ever asked me for. This site is where a lot of that ends up.
-          </p>
-          <p className="text-sm text-black/65 leading-relaxed">
-            Lately I have incorporated A.I. tools into my repertoire. If that feels like a dealbreaker
-            for you, no worries — continue on your journey. For my part, I have been using the Adobe
-            Creative Suite for, geez — 30+ years! I started out on Adobe Photoshop 2.0.
-            26 versions later, here we are. My point being, I've spent my whole life making my own
-            creations, and now A.I. lets me combine that experience to help realize visions that
-            previously would have been out of reach.
-          </p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/35 mb-3">{gb(3)?.label ?? 'Creative life'}</p>
+          <h2 className="text-2xl text-black mb-4 leading-snug" style={{ fontFamily: 'Peralta, serif' }}>{gb(3)?.heading ?? 'What I direct my creativity towards.'}</h2>
+          <div dangerouslySetInnerHTML={{ __html: gb(3)?.body_html ?? '' }} className="text-sm text-black/65 leading-relaxed [&>p]:mb-3 [&>p:last-child]:mb-0" />
         </LineRevealBlock>
 
         {/* Block 4 — right */}
@@ -198,21 +161,9 @@ export default async function HomePage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/jason-stanley-ink.png"
             alt="Jason Stanley" className="w-1/2 mx-auto block mb-5 rounded-xl" />
-          <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-2">Introduction</p>
-          <h2 className="text-2xl text-black mb-4" style={{ fontFamily: 'Peralta, serif' }}>Nice to meet ya.</h2>
-          <p className="text-sm text-black/65 leading-relaxed mb-3">
-            Hey — I'm Jason. I'm a husband and dad. I'm also an entrepreneur, builder,
-            marketer, writer, and creative based in North Carolina. If I had to narrow
-            that down to one word I would call myself a designer.
-          </p>
-          <p className="text-sm text-black/65 leading-relaxed">
-            One of the things I want to share on this site is that I live somewhere
-            between Cyclothymia and Bipolar II — clinically speaking. I've spent a long
-            time feeling like that was something I needed to hide to feeling like I should
-            be proud of how it shapes the way I think and make things. This site is a step
-            forward in that journey. I created it to share my thoughts and thought
-            processes, and the results, which may or may not be completely finished.
-          </p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-2">{gb(1)?.label ?? 'Introduction'}</p>
+          <h2 className="text-2xl text-black mb-4" style={{ fontFamily: 'Peralta, serif' }}>{gb(1)?.heading ?? 'Nice to meet ya.'}</h2>
+          <div dangerouslySetInnerHTML={{ __html: gb(1)?.body_html ?? '' }} className="text-sm text-black/65 leading-relaxed [&>p]:mb-3 [&>p:last-child]:mb-0" />
         </div>
 
         {/* Block 2 */}
@@ -221,30 +172,9 @@ export default async function HomePage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/waves-ink.png"
             alt="Wave frequency" className="w-1/2 mx-auto block mb-5 rounded-xl" />
-          <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-2">The thing itself</p>
-          <h2 className="text-2xl text-black mb-4" style={{ fontFamily: 'Peralta, serif' }}>What exactly is Bipolar II and Cyclothymia?</h2>
-          <p className="text-sm text-black/65 leading-relaxed mb-4">
-            Somewhere between Bipolar II and Cyclothymia — that's where I seem to live,
-            clinically speaking. Bipolar II means recurring depression and at least one
-            hypomanic episode: elevated mood that's real and intense, but short of full
-            mania. Cyclothymia lives a step below that — milder highs, milder lows, but
-            the cycling is still there, still real, still doing its thing. My experience
-            lands somewhere in between.
-          </p>
-          <p className="text-sm text-black/65 leading-relaxed mb-4">
-            If I had to describe it: imagine surfing a long swell — you don't go very high
-            or low, and you generally feel despondent. There is a fair bit of distance
-            between the peaks. Then the frequency and amplitude of the waves increase, and
-            now you are really surfing, cutting it up — it feels fulfilling. Then the waves
-            slow down again, and you're back.
-          </p>
-          <p className="text-sm text-black/65 leading-relaxed">
-            The same wiring that makes the lows hard makes the highs remarkably generative.
-            I may make connections others miss. I get genuinely obsessed with ideas. I feel
-            things deeply enough to make work that means something to me — half the time
-            I'll do something just for my own edification. Often those are the most
-            rewarding projects.
-          </p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-2">{gb(2)?.label ?? 'The thing itself'}</p>
+          <h2 className="text-2xl text-black mb-4" style={{ fontFamily: 'Peralta, serif' }}>{gb(2)?.heading ?? 'What exactly is Bipolar II and Cyclothymia?'}</h2>
+          <div dangerouslySetInnerHTML={{ __html: gb(2)?.body_html ?? '' }} className="text-sm text-black/65 leading-relaxed [&>p]:mb-3 [&>p:last-child]:mb-0" />
         </div>
 
         {/* Block 3 */}
@@ -253,25 +183,9 @@ export default async function HomePage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/tree-ink.png"
             alt="Tree" className="w-1/2 mx-auto block mb-5 rounded-xl" />
-          <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-2">Creative life</p>
-          <h2 className="text-2xl text-black mb-4" style={{ fontFamily: 'Peralta, serif' }}>What I direct my creativity towards.</h2>
-          <p className="text-sm text-black/65 leading-relaxed mb-4">
-            All directions, honestly. Projects for my kids and family. Things for the
-            other roles in my life: coaching, leading Scouts, running a business.
-            I read, write, draw (not very well), work in Photoshop (pretty well),
-            make videos, and follow my brain down rabbit holes. Business concepts and
-            solutions to problems no one ever asked me for. This site is where a lot
-            of that ends up.
-          </p>
-          <p className="text-sm text-black/65 leading-relaxed">
-            Lately I have incorporated A.I. tools into my repertoire. If that feels
-            like a dealbreaker for you, no worries — continue on your journey. For my
-            part, I have been using the Adobe Creative Suite for, geez — 30+ years!
-            I started out on Adobe Photoshop 2.0. 26 versions later, here we are.
-            My point being, I've spent my whole life making my own creations, and now
-            A.I. lets me combine that experience to help realize visions that previously
-            would have been out of reach.
-          </p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-2">{gb(3)?.label ?? 'Creative life'}</p>
+          <h2 className="text-2xl text-black mb-4" style={{ fontFamily: 'Peralta, serif' }}>{gb(3)?.heading ?? 'What I direct my creativity towards.'}</h2>
+          <div dangerouslySetInnerHTML={{ __html: gb(3)?.body_html ?? '' }} className="text-sm text-black/65 leading-relaxed [&>p]:mb-3 [&>p:last-child]:mb-0" />
         </div>
 
         {/* Latest post */}
