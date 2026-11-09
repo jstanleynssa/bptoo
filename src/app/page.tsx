@@ -201,13 +201,17 @@ export default async function HomePage() {
           <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-2">Introduction</p>
           <h2 className="text-2xl text-black mb-4" style={{ fontFamily: 'Peralta, serif' }}>Nice to meet ya.</h2>
           <p className="text-sm text-black/65 leading-relaxed mb-3">
-            Hey — I'm Jason. A husband, dad, entrepreneur, builder, and creative based
-            in North Carolina. If I had to narrow that down to one word: designer.
+            Hey — I'm Jason. I'm a husband and dad. I'm also an entrepreneur, builder,
+            marketer, writer, and creative based in North Carolina. If I had to narrow
+            that down to one word I would call myself a designer.
           </p>
           <p className="text-sm text-black/65 leading-relaxed">
-            I live somewhere between Cyclothymia and Bipolar II — clinically speaking.
-            I've spent a long time feeling like that was something to hide. This site is
-            me deciding otherwise.
+            One of the things I want to share on this site is that I live somewhere
+            between Cyclothymia and Bipolar II — clinically speaking. I've spent a long
+            time feeling like that was something I needed to hide to feeling like I should
+            be proud of how it shapes the way I think and make things. This site is a step
+            forward in that journey. I created it to share my thoughts and thought
+            processes, and the results, which may or may not be completely finished.
           </p>
         </div>
 
@@ -218,16 +222,28 @@ export default async function HomePage() {
           <img src="https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/waves-ink.png"
             alt="Wave frequency" className="w-1/2 mx-auto block mb-5 rounded-xl" />
           <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-2">The thing itself</p>
-          <h2 className="text-2xl text-black mb-4" style={{ fontFamily: 'Peralta, serif' }}>What exactly is Bipolar II?</h2>
+          <h2 className="text-2xl text-black mb-4" style={{ fontFamily: 'Peralta, serif' }}>What exactly is Bipolar II and Cyclothymia?</h2>
           <p className="text-sm text-black/65 leading-relaxed mb-4">
-            Bipolar II means recurring depression and at least one hypomanic episode. Cyclothymia
-            is a step below — milder highs and lows, but the cycling is still real. My experience
+            Somewhere between Bipolar II and Cyclothymia — that's where I seem to live,
+            clinically speaking. Bipolar II means recurring depression and at least one
+            hypomanic episode: elevated mood that's real and intense, but short of full
+            mania. Cyclothymia lives a step below that — milder highs, milder lows, but
+            the cycling is still there, still real, still doing its thing. My experience
             lands somewhere in between.
           </p>
+          <p className="text-sm text-black/65 leading-relaxed mb-4">
+            If I had to describe it: imagine surfing a long swell — you don't go very high
+            or low, and you generally feel despondent. There is a fair bit of distance
+            between the peaks. Then the frequency and amplitude of the waves increase, and
+            now you are really surfing, cutting it up — it feels fulfilling. Then the waves
+            slow down again, and you're back.
+          </p>
           <p className="text-sm text-black/65 leading-relaxed">
-            Imagine surfing a long swell — despondent, not moving much. Then the waves pick up,
-            and now you're really surfing. Then they slow again. The same wiring that makes the
-            lows hard makes the highs remarkably generative.
+            The same wiring that makes the lows hard makes the highs remarkably generative.
+            I may make connections others miss. I get genuinely obsessed with ideas. I feel
+            things deeply enough to make work that means something to me — half the time
+            I'll do something just for my own edification. Often those are the most
+            rewarding projects.
           </p>
         </div>
 
