@@ -255,10 +255,22 @@ export default async function HomePage() {
             alt="Tree" className="w-1/2 mx-auto block mb-5 rounded-xl" />
           <p className="text-[10px] font-bold uppercase tracking-widest text-black/35 mb-2">Creative life</p>
           <h2 className="text-2xl text-black mb-4" style={{ fontFamily: 'Peralta, serif' }}>What I direct my creativity towards.</h2>
+          <p className="text-sm text-black/65 leading-relaxed mb-4">
+            All directions, honestly. Projects for my kids and family. Things for the
+            other roles in my life: coaching, leading Scouts, running a business.
+            I read, write, draw (not very well), work in Photoshop (pretty well),
+            make videos, and follow my brain down rabbit holes. Business concepts and
+            solutions to problems no one ever asked me for. This site is where a lot
+            of that ends up.
+          </p>
           <p className="text-sm text-black/65 leading-relaxed">
-            All directions — projects for my kids and family, coaching, leading Scouts,
-            running a business. I read, write, draw, work in Photoshop, make videos,
-            and follow my brain down rabbit holes. This site is where a lot of that ends up.
+            Lately I have incorporated A.I. tools into my repertoire. If that feels
+            like a dealbreaker for you, no worries — continue on your journey. For my
+            part, I have been using the Adobe Creative Suite for, geez — 30+ years!
+            I started out on Adobe Photoshop 2.0. 26 versions later, here we are.
+            My point being, I've spent my whole life making my own creations, and now
+            A.I. lets me combine that experience to help realize visions that previously
+            would have been out of reach.
           </p>
         </div>
 
