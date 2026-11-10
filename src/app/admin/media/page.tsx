@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Upload, Copy, Trash2, Loader2, Check, Image as ImageIcon } from 'lucide-react'
 import { toast } from 'sonner'
+import { compressImage } from '@/lib/compress-image'
 import Image from 'next/image'
 
 interface MediaFile {
@@ -59,9 +60,10 @@ export default function MediaPage() {
     setUploading(true)
 
     const uploads = Array.from(fileList).map(async file => {
-      const ext = file.name.split('.').pop()
+      const fileToUpload = file.type.startsWith('image/') ? await compressImage(file) : file
+      const ext = fileToUpload.name.split('.').pop()
       const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-      const { error } = await supabase.storage.from('media').upload(path, file)
+      const { error } = await supabase.storage.from('media').upload(path, fileToUpload)
       if (error) toast.error(`${file.name}: ${error.message}`)
     })
 

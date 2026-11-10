@@ -8,6 +8,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import slugify from 'slugify'
 import { toast } from 'sonner'
+import { compressImage } from '@/lib/compress-image'
 
 const MEDIUMS = ['Digital', 'Acrylic', 'Oil', 'Watercolor', 'Pencil', 'Ink', 'Mixed Media', 'Photography', 'Other']
 
@@ -88,9 +89,10 @@ export default function BatchArtworkPage() {
 
       try {
         // Upload to Supabase storage
-        const ext = img.file.name.split('.').pop()
+        const compressed = await compressImage(img.file)
+        const ext = compressed.name.split('.').pop()
         const path = `artwork/${Date.now()}-${uid()}.${ext}`
-        const { error: uploadErr } = await supabase.storage.from('media').upload(path, img.file)
+        const { error: uploadErr } = await supabase.storage.from('media').upload(path, compressed)
         if (uploadErr) throw uploadErr
 
         const { data: { publicUrl } } = supabase.storage.from('media').getPublicUrl(path)

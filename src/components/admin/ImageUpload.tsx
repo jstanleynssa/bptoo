@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { compressImage } from '@/lib/compress-image'
 import { Upload, X, Loader2, Library } from 'lucide-react'
 import Image from 'next/image'
 import MediaPicker from '@/components/admin/MediaPicker'
@@ -38,12 +39,13 @@ export default function ImageUpload({
     setError(null)
 
     const supabase = createClient()
-    const ext = file.name.split('.').pop()
+    const compressed = await compressImage(file)
+    const ext = compressed.name.split('.').pop()
     const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
 
     const { error: uploadError } = await supabase.storage
       .from(bucket)
-      .upload(path, file, { upsert: false })
+      .upload(path, compressed, { upsert: false })
 
     if (uploadError) {
       setError(uploadError.message)
@@ -99,7 +101,7 @@ export default function ImageUpload({
               <div className="flex flex-col items-center gap-2 text-zinc-500 group-hover:text-zinc-400 transition-colors">
                 <Upload size={24} />
                 <span className="text-sm">Drop image here or click to upload</span>
-                <span className="text-xs">PNG, JPG, GIF, WebP — max 10MB</span>
+                <span className="text-xs">PNG, JPG, GIF, WebP — auto-compressed to 2MB</span>
               </div>
             )}
           </div>

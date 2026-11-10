@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { compressImage } from '@/lib/compress-image'
 import { Upload, X, Loader2, Library, GripVertical } from 'lucide-react'
 import Image from 'next/image'
 import MediaPicker from '@/components/admin/MediaPicker'
@@ -26,9 +27,10 @@ export default function GalleryUpload({ images, onChange, folder = 'gallery' }: 
 
     for (const file of Array.from(files)) {
       if (!file.type.startsWith('image/')) continue
-      const ext = file.name.split('.').pop()
+      const compressed = await compressImage(file)
+      const ext = compressed.name.split('.').pop()
       const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-      const { error } = await supabase.storage.from('media').upload(path, file)
+      const { error } = await supabase.storage.from('media').upload(path, compressed)
       if (error) { toast.error(file.name + ': ' + error.message); continue }
       urls.push(supabase.storage.from('media').getPublicUrl(path).data.publicUrl)
     }
