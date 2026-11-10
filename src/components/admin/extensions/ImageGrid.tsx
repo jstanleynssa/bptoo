@@ -53,7 +53,7 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
             </div>
             <div className="flex items-center gap-1 text-xs text-zinc-400">
               Cols:
-              {[1, 2, 3].map(n => (
+              {[1, 2, 3, 4].map(n => (
                 <button key={n} onClick={() => setCols(n)}
                   className={`w-5 h-5 rounded text-xs transition-colors ${cols === n ? 'bg-violet-600 text-white' : 'bg-zinc-200 text-zinc-600 hover:bg-zinc-300'}`}>
                   {n}
