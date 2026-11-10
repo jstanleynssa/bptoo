@@ -26,6 +26,7 @@
     "@tiptap/pm": "^3.32.2",
     "@tiptap/react": "^3.32.2",
     "@tiptap/starter-kit": "^3.32.2",
+    "browser-image-compression": "^2.0.2",
     "date-fns": "^4.4.0",
     "framer-motion": "^14.9.0",
     "html-react-parser": "^6.1.9",
