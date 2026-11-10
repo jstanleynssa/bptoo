@@ -2,7 +2,6 @@
 
 import { useEditor, EditorContent, useEditorState } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
 import { ScreenplayBlock } from '@/components/admin/extensions/ScreenplayBlock'
@@ -16,7 +15,7 @@ import { TableCell } from '@tiptap/extension-table-cell'
 import {
   Bold, Italic, Strikethrough, Code, Heading2, Heading3,
   List, ListOrdered, Quote, Minus, Link as LinkIcon,
-  Image as ImageIcon, Undo, Redo, Code2, Film, Images, Clapperboard,
+  Undo, Redo, Code2, Film, Images, Clapperboard,
   Table as TableIcon, RowsIcon, Columns3, Trash2, ImagePlus,
 } from 'lucide-react'
 import { useCallback } from 'react'
@@ -67,7 +66,6 @@ export default function Editor({ content, onChange, placeholder = 'Write somethi
       TableRow,
       TableHeader,
       TableCell,
-      Image.configure({ HTMLAttributes: { class: 'rounded-lg max-w-full h-auto block' }, inline: false }),
       Link.configure({
         openOnClick: false,
         HTMLAttributes: { class: 'text-violet-400 underline' },
@@ -99,12 +97,6 @@ export default function Editor({ content, onChange, placeholder = 'Write somethi
     editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
   }, [editor])
 
-  const addImage = useCallback(() => {
-    if (!editor) return
-    const url = window.prompt('Image URL')
-    if (url) editor.chain().focus().setImage({ src: url }).run()
-  }, [editor])
-
   // Reactively check if cursor is inside a table — updates on every selection change
   const isInTable = useEditorState({
     editor,
@@ -132,7 +124,6 @@ export default function Editor({ content, onChange, placeholder = 'Write somethi
         <ToolbarButton onClick={() => editor.chain().focus().setHorizontalRule().run()} active={false} title="Divider"><Minus size={15} /></ToolbarButton>
         <div className="w-px bg-zinc-700 mx-1 self-stretch" />
         <ToolbarButton onClick={setLink} active={editor.isActive('link')} title="Link"><LinkIcon size={15} /></ToolbarButton>
-        <ToolbarButton onClick={addImage} active={false} title="Inline image (no caption)"><ImageIcon size={15} /></ToolbarButton>
         <div className="w-px bg-zinc-700 mx-1 self-stretch" />
         <ToolbarButton onClick={() => editor.chain().focus().undo().run()} active={false} title="Undo"><Undo size={15} /></ToolbarButton>
         <ToolbarButton onClick={() => editor.chain().focus().redo().run()} active={false} title="Redo"><Redo size={15} /></ToolbarButton>
