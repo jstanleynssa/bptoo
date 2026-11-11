@@ -26,7 +26,7 @@ export default function MediaPicker({ onSelect, onSelectMultiple, onClose }: Med
   const isMulti = !!onSelectMultiple
 
   const load = useCallback(async () => {
-    const folders = ['', 'artwork', 'posts', 'projects', 'gallery', 'uploads', 'attachments']
+    const folders = ['', 'artwork', 'posts', 'projects', 'gallery', 'uploads', 'attachments', 'got-game']
     const allFiles: MediaFile[] = []
     for (const folder of folders) {
       const prefix = folder ? `${folder}/` : ''
