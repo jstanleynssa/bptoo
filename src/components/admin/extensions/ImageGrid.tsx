@@ -2,37 +2,69 @@
 
 import { Node, mergeAttributes } from '@tiptap/core'
 import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { X, Images } from 'lucide-react'
 import MediaPicker from '@/components/admin/MediaPicker'
 
 import type { ReactNodeViewProps } from '@tiptap/react'
+
+function parseSrcs(raw: unknown): string[] {
+  try {
+    const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw
+    return Array.isArray(parsed) ? parsed : []
+  } catch { return [] }
+}
+
 function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProps) {
   const [pickerOpen, setPickerOpen] = useState(false)
-  const rawSrcs = node.attrs.srcs
-  const srcs: string[] = (() => {
-    try {
-      const parsed = typeof rawSrcs === 'string' ? JSON.parse(rawSrcs) : rawSrcs
-      return Array.isArray(parsed) ? parsed : []
-    } catch { return [] }
-  })()
-  const caption = (node.attrs.caption as string) ?? ''
-  const rawCols = node.attrs.cols
-  const cols = typeof rawCols === 'string' ? parseInt(rawCols) || 2 : (rawCols as number) ?? 2
-  const ratio = (node.attrs.ratio as string) ?? 'square'
+
+  // Local state drives rendering immediately — updateAttributes persists to Tiptap.
+  // Tiptap v3 + React 19: attr-only changes on atom nodes don't always trigger a
+  // NodeView re-render, so we can't rely on node.attrs as the display source of truth.
+  const [srcs, setSrcs] = useState<string[]>(() => parseSrcs(node.attrs.srcs))
+  const [cols, setCols] = useState<number>(() => {
+    const raw = node.attrs.cols
+    return typeof raw === 'string' ? parseInt(raw) || 2 : (raw as number) ?? 2
+  })
+  const [ratio, setRatio] = useState<string>(() => (node.attrs.ratio as string) ?? 'sq')
+  const [caption, setCaption] = useState<string>(() => (node.attrs.caption as string) ?? '')
+
+  // Sync inward if Tiptap ever does push a fresh node (e.g. undo/redo)
+  useEffect(() => { setSrcs(parseSrcs(node.attrs.srcs)) }, [node.attrs.srcs])
+  useEffect(() => {
+    const raw = node.attrs.cols
+    setCols(typeof raw === 'string' ? parseInt(raw) || 2 : (raw as number) ?? 2)
+  }, [node.attrs.cols])
+  useEffect(() => { setRatio((node.attrs.ratio as string) ?? 'sq') }, [node.attrs.ratio])
+  useEffect(() => { setCaption((node.attrs.caption as string) ?? '') }, [node.attrs.caption])
 
   function addImages(urls: string[]) {
-    updateAttributes({ srcs: [...srcs, ...urls] })
+    const next = [...srcs, ...urls]
+    setSrcs(next)
+    updateAttributes({ srcs: next })
     setPickerOpen(false)
   }
 
   function removeImage(idx: number) {
-    updateAttributes({ srcs: srcs.filter((_, i) => i !== idx) })
+    const next = srcs.filter((_, i) => i !== idx)
+    setSrcs(next)
+    updateAttributes({ srcs: next })
   }
 
-  function setCols(n: number) {
+  function handleSetCols(n: number) {
+    setCols(n)
     updateAttributes({ cols: n })
+  }
+
+  function handleSetRatio(v: string) {
+    setRatio(v)
+    updateAttributes({ ratio: v })
+  }
+
+  function handleCaption(v: string) {
+    setCaption(v)
+    updateAttributes({ caption: v })
   }
 
   return (
@@ -46,7 +78,7 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
             <div className="flex items-center gap-1 text-xs text-zinc-400 mr-3">
               Ratio:
               {[['sq','Square'],['vid','Video'],['port','Portrait'],['free','Natural']].map(([v, l]) => (
-                <button key={v} onClick={() => updateAttributes({ ratio: v })}
+                <button key={v} onClick={() => handleSetRatio(v)}
                   className={`px-1.5 py-0.5 rounded text-xs transition-colors ${ratio === v ? 'bg-violet-600 text-white' : 'bg-zinc-200 text-zinc-600 hover:bg-zinc-300'}`}>
                   {l}
                 </button>
@@ -55,7 +87,7 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
             <div className="flex items-center gap-1 text-xs text-zinc-400">
               Cols:
               {[1, 2, 3, 4].map(n => (
-                <button key={n} onClick={() => setCols(n)}
+                <button key={n} onClick={() => handleSetCols(n)}
                   className={`w-5 h-5 rounded text-xs transition-colors ${cols === n ? 'bg-violet-600 text-white' : 'bg-zinc-200 text-zinc-600 hover:bg-zinc-300'}`}>
                   {n}
                 </button>
@@ -113,7 +145,7 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
         <input
           type="text"
           value={caption}
-          onChange={e => updateAttributes({ caption: e.target.value })}
+          onChange={e => handleCaption(e.target.value)}
           placeholder="Add a caption…"
           className="w-full text-xs text-zinc-500 placeholder-zinc-700 bg-transparent border-0 border-t border-zinc-200 pt-2 focus:outline-none focus:text-zinc-700 italic"
         />
