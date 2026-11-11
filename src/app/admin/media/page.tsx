@@ -48,7 +48,8 @@ export default function MediaPage() {
         })
     }
     
-    // Sort newest first
+    // Sort newest first across all folders
+    allFiles.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
     setFiles(allFiles)
     setLoading(false)
   }, [supabase])
