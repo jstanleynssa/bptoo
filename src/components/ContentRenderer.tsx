@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import parse, { Element, type HTMLReactParserOptions } from 'html-react-parser'
+import { parseImages } from '@/components/admin/extensions/ImageGrid'
 import Image from 'next/image'
 import Lightbox from '@/components/Lightbox'
 
@@ -66,20 +67,31 @@ function VideoRenderer({ src, onPlay }: { src: string; onPlay?: () => void }) {
 
 // ── Image grid renderer ──────────────────────────────────────────────────────
 
-function ImageGridRenderer({ srcs, cols, ratio, onImageClick }: { srcs: string[]; cols: number; ratio?: string; onImageClick: (src: string, all: string[]) => void }) {
-  if (!srcs.length) return null
+function ImageGridRenderer({ images, cols, ratio, onImageClick }: {
+  images: { src: string; caption: string }[]
+  cols: number
+  ratio?: string
+  onImageClick: (src: string, all: string[]) => void
+}) {
+  if (!images.length) return null
+  const allSrcs = images.map(img => img.src)
   const ratioClass = ratio === 'sq' ? 'aspect-square' : ratio === 'vid' ? 'aspect-video' : ratio === 'port' ? 'aspect-[3/4]' : ''
 
   if (ratio === 'free') {
     // Masonry: natural proportions, no cropping
     return (
       <div className="my-8 not-prose" style={{ columns: cols, gap: '8px' }}>
-        {srcs.map((src, i) => (
-          <button key={i} onClick={() => onImageClick(src, srcs)}
-            className="block w-full mb-2 rounded-xl overflow-hidden cursor-zoom-in group break-inside-avoid">
-            <Image src={src} alt="" width={600} height={600}
-              className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300" sizes="400px" />
-          </button>
+        {images.map((img, i) => (
+          <div key={i} className="mb-3 break-inside-avoid">
+            <button onClick={() => onImageClick(img.src, allSrcs)}
+              className="block w-full rounded-xl overflow-hidden cursor-zoom-in group">
+              <Image src={img.src} alt={img.caption || ''} width={600} height={600}
+                className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300" sizes="400px" />
+            </button>
+            {img.caption && (
+              <p className="text-xs text-center mt-1.5 opacity-50 italic">{img.caption}</p>
+            )}
+          </div>
         ))}
       </div>
     )
@@ -87,10 +99,15 @@ function ImageGridRenderer({ srcs, cols, ratio, onImageClick }: { srcs: string[]
 
   return (
     <div className="my-8 not-prose" style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: '8px' }}>
-      {srcs.map((src, i) => (
-        <button key={i} onClick={() => onImageClick(src, srcs)} className={`relative rounded-xl overflow-hidden bg-black/5 cursor-zoom-in group ${ratioClass}`}>
-          <Image src={src} alt="" fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="400px" />
-        </button>
+      {images.map((img, i) => (
+        <div key={i}>
+          <button onClick={() => onImageClick(img.src, allSrcs)} className={`relative block w-full rounded-xl overflow-hidden bg-black/5 cursor-zoom-in group ${ratioClass}`}>
+            <Image src={img.src} alt={img.caption || ''} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="400px" />
+          </button>
+          {img.caption && (
+            <p className="text-xs text-center mt-1.5 opacity-50 italic">{img.caption}</p>
+          )}
+        </div>
       ))}
     </div>
   )
@@ -197,27 +214,37 @@ export default function ContentRenderer({ html, className, onVideoPlay, videoPla
 
       // Image grid
       if (domNode.attribs?.['data-image-grid'] !== undefined) {
-        const srcsRaw = domNode.attribs['data-srcs'] ?? '[]'
         const cols = parseInt(domNode.attribs['data-cols'] ?? '2')
         const ratio = domNode.attribs['data-ratio'] ?? 'sq'
-        try {
-          const parsed = JSON.parse(srcsRaw)
-          // Handle double-encoded string (comma-separated) or proper JSON array
-          const srcs: string[] = Array.isArray(parsed)
-            ? parsed
-            : typeof parsed === 'string'
-              ? parsed.split(',').map(s => s.trim()).filter(Boolean)
-              : []
-          const gridCaption = domNode.attribs['data-caption'] ?? ''
-          return (
-            <>
-              <ImageGridRenderer srcs={srcs} cols={cols} ratio={ratio} onImageClick={(src, all) => setLightbox({ src, srcs: all })} />
-              {gridCaption && (
-                <p className="text-center text-sm italic opacity-50 -mt-4 mb-6">{gridCaption}</p>
-              )}
-            </>
-          )
-        } catch { return <></> }
+        const gridCaption = domNode.attribs['data-caption'] ?? ''
+
+        // New format: data-images [{src,caption}…]
+        // Backward compat: old data-srcs plain URL array
+        const imagesRaw = domNode.attribs['data-images']
+        const srcsRaw = domNode.attribs['data-srcs']
+        let images: { src: string; caption: string }[] = []
+        if (imagesRaw) {
+          images = parseImages(imagesRaw)
+        } else if (srcsRaw) {
+          try {
+            const parsed = JSON.parse(srcsRaw)
+            const srcs: string[] = Array.isArray(parsed)
+              ? parsed
+              : typeof parsed === 'string'
+                ? parsed.split(',').map((s: string) => s.trim()).filter(Boolean)
+                : []
+            images = srcs.map(src => ({ src, caption: '' }))
+          } catch {}
+        }
+
+        return (
+          <>
+            <ImageGridRenderer images={images} cols={cols} ratio={ratio} onImageClick={(src, all) => setLightbox({ src, srcs: all })} />
+            {gridCaption && (
+              <p className="text-center text-sm italic opacity-50 -mt-4 mb-6">{gridCaption}</p>
+            )}
+          </>
+        )
       }
     },
   }

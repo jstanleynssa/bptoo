@@ -9,10 +9,25 @@ import MediaPicker from '@/components/admin/MediaPicker'
 
 import type { ReactNodeViewProps } from '@tiptap/react'
 
-function parseSrcs(raw: unknown): string[] {
+export interface ImageItem {
+  src: string
+  caption: string
+}
+
+/** Parse the `images` attribute, handling both the new object format and
+ *  the old plain-string-array format for backward compat. */
+export function parseImages(raw: unknown): ImageItem[] {
   try {
     const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw
-    return Array.isArray(parsed) ? parsed : []
+    if (!Array.isArray(parsed)) return []
+    return (parsed as unknown[]).flatMap(item => {
+      if (typeof item === 'string') return [{ src: item, caption: '' }]
+      if (item && typeof item === 'object' && 'src' in item) {
+        const o = item as { src: string; caption?: string }
+        return [{ src: o.src, caption: o.caption ?? '' }]
+      }
+      return []
+    })
   } catch { return [] }
 }
 
@@ -22,7 +37,7 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
   // Local state drives rendering immediately — updateAttributes persists to Tiptap.
   // Tiptap v3 + React 19: attr-only changes on atom nodes don't always trigger a
   // NodeView re-render, so we can't rely on node.attrs as the display source of truth.
-  const [srcs, setSrcs] = useState<string[]>(() => parseSrcs(node.attrs.srcs))
+  const [images, setImages] = useState<ImageItem[]>(() => parseImages(node.attrs.images))
   const [cols, setCols] = useState<number>(() => {
     const raw = node.attrs.cols
     return typeof raw === 'string' ? parseInt(raw) || 2 : (raw as number) ?? 2
@@ -31,7 +46,7 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
   const [caption, setCaption] = useState<string>(() => (node.attrs.caption as string) ?? '')
 
   // Sync inward if Tiptap ever does push a fresh node (e.g. undo/redo)
-  useEffect(() => { setSrcs(parseSrcs(node.attrs.srcs)) }, [node.attrs.srcs])
+  useEffect(() => { setImages(parseImages(node.attrs.images)) }, [node.attrs.images])
   useEffect(() => {
     const raw = node.attrs.cols
     setCols(typeof raw === 'string' ? parseInt(raw) || 2 : (raw as number) ?? 2)
@@ -40,16 +55,22 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
   useEffect(() => { setCaption((node.attrs.caption as string) ?? '') }, [node.attrs.caption])
 
   function addImages(urls: string[]) {
-    const next = [...srcs, ...urls]
-    setSrcs(next)
-    updateAttributes({ srcs: next })
+    const next = [...images, ...urls.map(src => ({ src, caption: '' }))]
+    setImages(next)
+    updateAttributes({ images: next })
     setPickerOpen(false)
   }
 
   function removeImage(idx: number) {
-    const next = srcs.filter((_, i) => i !== idx)
-    setSrcs(next)
-    updateAttributes({ srcs: next })
+    const next = images.filter((_, i) => i !== idx)
+    setImages(next)
+    updateAttributes({ images: next })
+  }
+
+  function updateImageCaption(idx: number, cap: string) {
+    const next = images.map((img, i) => i === idx ? { ...img, caption: cap } : img)
+    setImages(next)
+    updateAttributes({ images: next })
   }
 
   function handleSetCols(n: number) {
@@ -66,6 +87,16 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
     setCaption(v)
     updateAttributes({ caption: v })
   }
+
+  const captionInput = (img: ImageItem, i: number) => (
+    <input
+      type="text"
+      value={img.caption}
+      onChange={e => updateImageCaption(i, e.target.value)}
+      placeholder="Caption…"
+      className="w-full text-xs text-zinc-500 placeholder-zinc-600 bg-transparent mt-1 px-0.5 focus:outline-none italic border-b border-transparent focus:border-zinc-300 transition-colors"
+    />
+  )
 
   return (
     <NodeViewWrapper>
@@ -99,36 +130,43 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
         </div>
 
         <div className="p-3">
-          {srcs.length === 0 ? (
+          {images.length === 0 ? (
             <button onClick={() => setPickerOpen(true)}
               className="w-full py-8 text-sm text-zinc-400 hover:text-zinc-600 text-center border-2 border-dashed border-zinc-200 rounded-lg transition-colors">
               Click to add images from library
             </button>
           ) : ratio === 'free' ? (
-              <div style={{ columns: cols, gap: '8px' }}>
-                {srcs.map((src, i) => (
-                  <div key={i} className="relative group mb-2 rounded-lg overflow-hidden bg-zinc-100 break-inside-avoid">
-                    <Image src={src} alt="" width={400} height={400} className="w-full h-auto object-cover block group-hover:scale-105 transition-transform duration-300" sizes="200px" />
+            <div style={{ columns: cols, gap: '8px' }}>
+              {images.map((img, i) => (
+                <div key={i} className="mb-3 break-inside-avoid group">
+                  <div className="relative rounded-lg overflow-hidden bg-zinc-100">
+                    <Image src={img.src} alt={img.caption} width={400} height={400}
+                      className="w-full h-auto object-cover block group-hover:scale-105 transition-transform duration-300" sizes="200px" />
                     <button onClick={() => removeImage(i)}
                       className="absolute top-1 right-1 p-1 bg-zinc-900/70 hover:bg-red-600 rounded opacity-0 group-hover:opacity-100 transition-all text-white">
                       <X size={12} />
                     </button>
                   </div>
-                ))}
-                <button onClick={() => setPickerOpen(true)}
-                  className="w-full mb-2 py-6 rounded-lg border-2 border-dashed border-zinc-200 hover:border-violet-400 flex items-center justify-center text-zinc-400 hover:text-violet-500 transition-colors text-sm break-inside-avoid">
-                  + Add
-                </button>
-              </div>
-            ) : (
-            <div className={`grid gap-2`} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
-              {srcs.map((src, i) => (
-                <div key={i} className={`relative group rounded-lg overflow-hidden bg-zinc-100 ${ratio === 'sq' ? 'aspect-square' : ratio === 'vid' ? 'aspect-video' : ratio === 'port' ? 'aspect-[3/4]' : ''}`}>
-                  <Image src={src} alt="" fill className="object-cover" sizes="400px" />
-                  <button onClick={() => removeImage(i)}
-                    className="absolute top-1 right-1 p-1 bg-zinc-900/70 hover:bg-red-600 rounded opacity-0 group-hover:opacity-100 transition-all text-white">
-                    <X size={12} />
-                  </button>
+                  {captionInput(img, i)}
+                </div>
+              ))}
+              <button onClick={() => setPickerOpen(true)}
+                className="w-full mb-2 py-6 rounded-lg border-2 border-dashed border-zinc-200 hover:border-violet-400 flex items-center justify-center text-zinc-400 hover:text-violet-500 transition-colors text-sm break-inside-avoid">
+                + Add
+              </button>
+            </div>
+          ) : (
+            <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+              {images.map((img, i) => (
+                <div key={i} className="group">
+                  <div className={`relative rounded-lg overflow-hidden bg-zinc-100 ${ratio === 'sq' ? 'aspect-square' : ratio === 'vid' ? 'aspect-video' : ratio === 'port' ? 'aspect-[3/4]' : ''}`}>
+                    <Image src={img.src} alt={img.caption} fill className="object-cover" sizes="400px" />
+                    <button onClick={() => removeImage(i)}
+                      className="absolute top-1 right-1 p-1 bg-zinc-900/70 hover:bg-red-600 rounded opacity-0 group-hover:opacity-100 transition-all text-white">
+                      <X size={12} />
+                    </button>
+                  </div>
+                  {captionInput(img, i)}
                 </div>
               ))}
               <button onClick={() => setPickerOpen(true)}
@@ -140,13 +178,13 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
         </div>
       </div>
 
-      {/* Caption input */}
+      {/* Grid-level caption */}
       <div className="px-3 pb-3" contentEditable={false}>
         <input
           type="text"
           value={caption}
           onChange={e => handleCaption(e.target.value)}
-          placeholder="Add a caption…"
+          placeholder="Add a grid caption…"
           className="w-full text-xs text-zinc-500 placeholder-zinc-700 bg-transparent border-0 border-t border-zinc-200 pt-2 focus:outline-none focus:text-zinc-700 italic"
         />
       </div>
@@ -164,27 +202,42 @@ export const ImageGridNode = Node.create({
   atom: true,
   addAttributes() {
     return {
-      srcs: { default: [] },
+      images: { default: [] },   // [{ src, caption }] — replaces legacy srcs
       cols: { default: 2 },
       ratio: { default: 'sq' },
-      caption: { default: '' },
+      caption: { default: '' },  // grid-level caption
     }
   },
   parseHTML() {
     return [{
       tag: 'div[data-image-grid]',
-      getAttrs: (dom: HTMLElement) => ({
-        srcs: JSON.parse(dom.getAttribute('data-srcs') || '[]'),
-        cols: parseInt(dom.getAttribute('data-cols') || '2'),
-        ratio: dom.getAttribute('data-ratio') || 'sq',
-        caption: dom.getAttribute('data-caption') || '',
-      }),
+      getAttrs: (dom: HTMLElement) => {
+        // New format: data-images JSON
+        const imagesRaw = dom.getAttribute('data-images')
+        let images: ImageItem[] = []
+        if (imagesRaw) {
+          images = parseImages(imagesRaw)
+        } else {
+          // Backward compat: old data-srcs plain URL array
+          const srcsRaw = dom.getAttribute('data-srcs') || '[]'
+          try {
+            const srcs = JSON.parse(srcsRaw)
+            images = Array.isArray(srcs) ? srcs.map((s: string) => ({ src: s, caption: '' })) : []
+          } catch {}
+        }
+        return {
+          images,
+          cols: parseInt(dom.getAttribute('data-cols') || '2'),
+          ratio: dom.getAttribute('data-ratio') || 'sq',
+          caption: dom.getAttribute('data-caption') || '',
+        }
+      },
     }]
   },
   renderHTML({ HTMLAttributes, node }) {
     return ['div', mergeAttributes(HTMLAttributes, {
       'data-image-grid': '',
-      'data-srcs': JSON.stringify(node.attrs.srcs),
+      'data-images': JSON.stringify(node.attrs.images),
       'data-cols': String(node.attrs.cols),
       'data-ratio': String(node.attrs.ratio || 'sq'),
       'data-caption': String(node.attrs.caption || ''),
