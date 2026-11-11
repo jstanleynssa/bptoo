@@ -94,7 +94,7 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
       value={img.caption}
       onChange={e => updateImageCaption(i, e.target.value)}
       placeholder="Caption…"
-      className="w-full text-xs text-zinc-500 placeholder-zinc-600 bg-transparent mt-1 px-0.5 focus:outline-none italic border-b border-transparent focus:border-zinc-300 transition-colors"
+      className="w-full text-xs text-zinc-300 placeholder-zinc-500 bg-transparent mt-1.5 px-0.5 focus:outline-none italic border-b border-zinc-700 focus:border-violet-400 transition-colors"
     />
   )
 
