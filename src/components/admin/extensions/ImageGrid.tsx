@@ -202,10 +202,12 @@ export const ImageGridNode = Node.create({
   atom: true,
   addAttributes() {
     return {
-      images: { default: [] },   // [{ src, caption }] — replaces legacy srcs
-      cols: { default: 2 },
-      ratio: { default: 'sq' },
-      caption: { default: '' },  // grid-level caption
+      // renderHTML: () => null suppresses Tiptap's default attr→HTML serialization.
+      // We handle all HTML output ourselves in the node-level renderHTML below.
+      images:  { default: [], renderHTML: () => null },
+      cols:    { default: 2,   renderHTML: () => null },
+      ratio:   { default: 'sq', renderHTML: () => null },
+      caption: { default: '',   renderHTML: () => null },
     }
   },
   parseHTML() {
@@ -218,12 +220,26 @@ export const ImageGridNode = Node.create({
         if (imagesRaw) {
           images = parseImages(imagesRaw)
         } else {
-          // Backward compat: old data-srcs plain URL array
-          const srcsRaw = dom.getAttribute('data-srcs') || '[]'
+          // Backward compat: old data-srcs, which may be:
+          //   - JSON array:  '["url1","url2"]'
+          //   - JSON string: '"url1,url2"'  (Tiptap v3 auto-serialized as comma-string)
+          //   - Absent: fall back to plain srcs="" attribute
+          const srcsRaw = dom.getAttribute('data-srcs') || ''
+          const plainSrcs = dom.getAttribute('srcs') || ''
+          const rawToParse = srcsRaw || (plainSrcs ? JSON.stringify(plainSrcs) : '[]')
           try {
-            const srcs = JSON.parse(srcsRaw)
-            images = Array.isArray(srcs) ? srcs.map((s: string) => ({ src: s, caption: '' })) : []
+            const parsed = JSON.parse(rawToParse)
+            const srcList: string[] = Array.isArray(parsed)
+              ? parsed
+              : typeof parsed === 'string'
+                ? parsed.split(',').map((s: string) => s.trim()).filter(Boolean)
+                : []
+            images = srcList.map(src => ({ src, caption: '' }))
           } catch {}
+          // Last resort: split plain srcs attr directly
+          if (!images.length && plainSrcs) {
+            images = plainSrcs.split(',').map((s: string) => s.trim()).filter(Boolean).map(src => ({ src, caption: '' }))
+          }
         }
         return {
           images,
