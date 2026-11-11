@@ -17,6 +17,7 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
       return Array.isArray(parsed) ? parsed : []
     } catch { return [] }
   })()
+  const caption = (node.attrs.caption as string) ?? ''
   const rawCols = node.attrs.cols
   const cols = typeof rawCols === 'string' ? parseInt(rawCols) || 2 : (rawCols as number) ?? 2
   const ratio = (node.attrs.ratio as string) ?? 'square'
@@ -107,6 +108,17 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
         </div>
       </div>
 
+      {/* Caption input */}
+      <div className="px-3 pb-3" contentEditable={false}>
+        <input
+          type="text"
+          value={caption}
+          onChange={e => updateAttributes({ caption: e.target.value })}
+          placeholder="Add a caption…"
+          className="w-full text-xs text-zinc-500 placeholder-zinc-700 bg-transparent border-0 border-t border-zinc-200 pt-2 focus:outline-none focus:text-zinc-700 italic"
+        />
+      </div>
+
       {pickerOpen && (
         <MediaPicker onSelectMultiple={addImages} onClose={() => setPickerOpen(false)} />
       )}
@@ -123,6 +135,7 @@ export const ImageGridNode = Node.create({
       srcs: { default: [] },
       cols: { default: 2 },
       ratio: { default: 'sq' },
+      caption: { default: '' },
     }
   },
   parseHTML() {
@@ -132,6 +145,7 @@ export const ImageGridNode = Node.create({
         srcs: JSON.parse(dom.getAttribute('data-srcs') || '[]'),
         cols: parseInt(dom.getAttribute('data-cols') || '2'),
         ratio: dom.getAttribute('data-ratio') || 'sq',
+        caption: dom.getAttribute('data-caption') || '',
       }),
     }]
   },
@@ -141,6 +155,7 @@ export const ImageGridNode = Node.create({
       'data-srcs': JSON.stringify(node.attrs.srcs),
       'data-cols': String(node.attrs.cols),
       'data-ratio': String(node.attrs.ratio || 'sq'),
+      'data-caption': String(node.attrs.caption || ''),
     })]
   },
   addNodeView() {

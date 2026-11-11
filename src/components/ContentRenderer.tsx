@@ -208,7 +208,15 @@ export default function ContentRenderer({ html, className, onVideoPlay, videoPla
             : typeof parsed === 'string'
               ? parsed.split(',').map(s => s.trim()).filter(Boolean)
               : []
-          return <ImageGridRenderer srcs={srcs} cols={cols} ratio={ratio} onImageClick={(src, all) => setLightbox({ src, srcs: all })} />
+          const gridCaption = domNode.attribs['data-caption'] ?? ''
+          return (
+            <>
+              <ImageGridRenderer srcs={srcs} cols={cols} ratio={ratio} onImageClick={(src, all) => setLightbox({ src, srcs: all })} />
+              {gridCaption && (
+                <p className="text-center text-sm italic opacity-50 -mt-4 mb-6">{gridCaption}</p>
+              )}
+            </>
+          )
         } catch { return <></> }
       }
     },
