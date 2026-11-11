@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, ExternalLink, Download } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ExternalLink, Download } from 'lucide-react'
 import ToolBadge from '@/components/ToolBadge'
 import { format } from 'date-fns'
 import ContentRenderer from '@/components/ContentRenderer'
@@ -45,6 +45,28 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const attachments = (project.attachments as unknown as Attachment[]) ?? []
   const gallery = project.images ?? []
   const embedUrl = project.video_url ? videoEmbedUrl(project.video_url) : null
+
+  // Fetch prev/next published projects by created_at
+  const [{ data: prevData }, { data: nextData }] = await Promise.all([
+    supabase.from('projects')
+      .select('title, slug, cover_image_url')
+      .eq('status', 'published')
+      .lt('created_at', project.created_at)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+      .then(r => r),
+    supabase.from('projects')
+      .select('title, slug, cover_image_url')
+      .eq('status', 'published')
+      .gt('created_at', project.created_at)
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .single()
+      .then(r => r),
+  ])
+  const prevProject = prevData as { title: string; slug: string; cover_image_url: string | null } | null
+  const nextProject = nextData as { title: string; slug: string; cover_image_url: string | null } | null
 
   return (
     <article className="max-w-3xl mx-auto">
@@ -171,6 +193,47 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         </section>
       )}
       <CommentsSection contentType="project" contentSlug={slug} />
+
+      {/* Prev / Next project navigation */}
+      {(prevProject || nextProject) && (
+        <nav className="mt-20 pt-10 border-t border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {prevProject ? (
+            <Link href={`/projects/${prevProject.slug}`}
+              className="group relative overflow-hidden rounded-2xl bg-white/5 hover:bg-white/10 transition-colors flex flex-col min-h-[140px]">
+              {prevProject.cover_image_url && (
+                <Image src={prevProject.cover_image_url} alt={prevProject.title} fill
+                  className="object-cover opacity-30 group-hover:opacity-50 transition-opacity duration-300" sizes="500px" />
+              )}
+              <div className="relative z-10 p-5 flex flex-col h-full justify-between">
+                <span className="flex items-center gap-1.5 text-xs text-white/40 uppercase tracking-wider font-medium">
+                  <ArrowLeft size={12} /> Previous
+                </span>
+                <p className="text-white font-semibold text-lg leading-tight mt-3 group-hover:text-[#FACD40] transition-colors" style={{ fontFamily: 'Peralta, serif' }}>
+                  {prevProject.title}
+                </p>
+              </div>
+            </Link>
+          ) : <div />}
+
+          {nextProject ? (
+            <Link href={`/projects/${nextProject.slug}`}
+              className="group relative overflow-hidden rounded-2xl bg-white/5 hover:bg-white/10 transition-colors flex flex-col min-h-[140px] sm:text-right">
+              {nextProject.cover_image_url && (
+                <Image src={nextProject.cover_image_url} alt={nextProject.title} fill
+                  className="object-cover opacity-30 group-hover:opacity-50 transition-opacity duration-300" sizes="500px" />
+              )}
+              <div className="relative z-10 p-5 flex flex-col h-full justify-between">
+                <span className="flex items-center gap-1.5 text-xs text-white/40 uppercase tracking-wider font-medium sm:justify-end">
+                  Next <ArrowRight size={12} />
+                </span>
+                <p className="text-white font-semibold text-lg leading-tight mt-3 group-hover:text-[#FACD40] transition-colors" style={{ fontFamily: 'Peralta, serif' }}>
+                  {nextProject.title}
+                </p>
+              </div>
+            </Link>
+          ) : <div />}
+        </nav>
+      )}
     </article>
   )
 }
