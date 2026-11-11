@@ -30,7 +30,7 @@ export default function MediaPage() {
     setLoading(true)
     
     // List root + all known subfolders to find every file in the bucket
-    const folders = ['', 'artwork', 'posts', 'projects', 'gallery', 'uploads', 'attachments', 'videos']
+    const folders = ['', 'artwork', 'posts', 'projects', 'gallery', 'uploads', 'attachments', 'videos', 'got-game']
     const allFiles: MediaFile[] = []
     
     for (const folder of folders) {
