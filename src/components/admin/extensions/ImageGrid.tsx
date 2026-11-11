@@ -201,54 +201,67 @@ export const ImageGridNode = Node.create({
   group: 'block',
   atom: true,
   addAttributes() {
+    // Per-attribute parseHTML is essential in Tiptap v3: it runs AFTER and
+    // OVERRIDES the node-level getAttrs for each individual attr. Without
+    // explicit parseHTML here, Tiptap falls back to dom.getAttribute(attrName)
+    // which produces null/wrong values for our data-* attributes.
     return {
-      // renderHTML: () => null suppresses Tiptap's default attr→HTML serialization.
-      // We handle all HTML output ourselves in the node-level renderHTML below.
-      images:  { default: [], renderHTML: () => null },
-      cols:    { default: 2,   renderHTML: () => null },
-      ratio:   { default: 'sq', renderHTML: () => null },
-      caption: { default: '',   renderHTML: () => null },
-    }
-  },
-  parseHTML() {
-    return [{
-      tag: 'div[data-image-grid]',
-      getAttrs: (dom: HTMLElement) => {
-        // New format: data-images JSON
-        const imagesRaw = dom.getAttribute('data-images')
-        let images: ImageItem[] = []
-        if (imagesRaw) {
-          images = parseImages(imagesRaw)
-        } else {
-          // Backward compat: old data-srcs, which may be:
-          //   - JSON array:  '["url1","url2"]'
-          //   - JSON string: '"url1,url2"'  (Tiptap v3 auto-serialized as comma-string)
-          //   - Absent: fall back to plain srcs="" attribute
-          const srcsRaw = dom.getAttribute('data-srcs') || ''
-          const plainSrcs = dom.getAttribute('srcs') || ''
-          const rawToParse = srcsRaw || (plainSrcs ? JSON.stringify(plainSrcs) : '[]')
+      images: {
+        default: [],
+        renderHTML: () => null,
+        parseHTML: (el: HTMLElement | string) => {
+          if (typeof el === 'string') return []
+          const imagesRaw = el.getAttribute('data-images')
+          if (imagesRaw) return parseImages(imagesRaw)
+          // Backward compat: data-srcs may be a JSON array, JSON string, or absent
+          const srcsRaw = el.getAttribute('data-srcs') || ''
+          const plainSrcs = el.getAttribute('srcs') || ''
+          const toParse = srcsRaw || (plainSrcs ? JSON.stringify(plainSrcs) : '[]')
           try {
-            const parsed = JSON.parse(rawToParse)
-            const srcList: string[] = Array.isArray(parsed)
+            const parsed = JSON.parse(toParse)
+            const list: string[] = Array.isArray(parsed)
               ? parsed
               : typeof parsed === 'string'
                 ? parsed.split(',').map((s: string) => s.trim()).filter(Boolean)
                 : []
-            images = srcList.map(src => ({ src, caption: '' }))
+            if (list.length) return list.map(src => ({ src, caption: '' }))
           } catch {}
-          // Last resort: split plain srcs attr directly
-          if (!images.length && plainSrcs) {
-            images = plainSrcs.split(',').map((s: string) => s.trim()).filter(Boolean).map(src => ({ src, caption: '' }))
+          if (plainSrcs) {
+            return plainSrcs.split(',').map((s: string) => s.trim()).filter(Boolean).map(src => ({ src, caption: '' }))
           }
-        }
-        return {
-          images,
-          cols: parseInt(dom.getAttribute('data-cols') || '2'),
-          ratio: dom.getAttribute('data-ratio') || 'sq',
-          caption: dom.getAttribute('data-caption') || '',
-        }
+          return []
+        },
       },
-    }]
+      cols: {
+        default: 2,
+        renderHTML: () => null,
+        parseHTML: (el: HTMLElement | string) => {
+          if (typeof el === 'string') return 2
+          const v = el.getAttribute('data-cols') || el.getAttribute('cols') || '2'
+          return parseInt(v) || 2
+        },
+      },
+      ratio: {
+        default: 'sq',
+        renderHTML: () => null,
+        parseHTML: (el: HTMLElement | string) => {
+          if (typeof el === 'string') return 'sq'
+          return el.getAttribute('data-ratio') || el.getAttribute('ratio') || 'sq'
+        },
+      },
+      caption: {
+        default: '',
+        renderHTML: () => null,
+        parseHTML: (el: HTMLElement | string) => {
+          if (typeof el === 'string') return ''
+          return el.getAttribute('data-caption') || el.getAttribute('caption') || ''
+        },
+      },
+    }
+  },
+  parseHTML() {
+    // Simple tag match — per-attribute parseHTML above handles all attr extraction.
+    return [{ tag: 'div[data-image-grid]' }]
   },
   renderHTML({ HTMLAttributes, node }) {
     return ['div', mergeAttributes(HTMLAttributes, {
