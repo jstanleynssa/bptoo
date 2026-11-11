@@ -31,7 +31,7 @@ export function parseImages(raw: unknown): ImageItem[] {
   } catch { return [] }
 }
 
-function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProps) {
+function ImageGridView({ node, updateAttributes, deleteNode, editor, getPos }: ReactNodeViewProps) {
   const [pickerOpen, setPickerOpen] = useState(false)
 
   // Local state drives rendering immediately — updateAttributes persists to Tiptap.
@@ -54,38 +54,57 @@ function ImageGridView({ node, updateAttributes, deleteNode }: ReactNodeViewProp
   useEffect(() => { setRatio((node.attrs.ratio as string) ?? 'sq') }, [node.attrs.ratio])
   useEffect(() => { setCaption((node.attrs.caption as string) ?? '') }, [node.attrs.caption])
 
+  // Direct ProseMirror dispatch — bypasses the global updateAttributes command which
+  // searches within tr.selection.ranges and silently no-ops when focus has moved to
+  // a modal (e.g. MediaPicker). setNodeMarkup at the node's known position always works.
+  function setAttrs(attrs: Record<string, unknown>) {
+    if (editor && typeof getPos === 'function') {
+      const pos = getPos()
+      if (typeof pos === 'number') {
+        const { state } = editor.view
+        const current = state.doc.nodeAt(pos)
+        if (current) {
+          editor.view.dispatch(state.tr.setNodeMarkup(pos, undefined, { ...current.attrs, ...attrs }))
+          return
+        }
+      }
+    }
+    // Fallback for edge cases where editor/getPos unavailable
+    updateAttributes(attrs)
+  }
+
   function addImages(urls: string[]) {
     const next = [...images, ...urls.map(src => ({ src, caption: '' }))]
     setImages(next)
-    updateAttributes({ images: next })
+    setAttrs({ images: next })
     setPickerOpen(false)
   }
 
   function removeImage(idx: number) {
     const next = images.filter((_, i) => i !== idx)
     setImages(next)
-    updateAttributes({ images: next })
+    setAttrs({ images: next })
   }
 
   function updateImageCaption(idx: number, cap: string) {
     const next = images.map((img, i) => i === idx ? { ...img, caption: cap } : img)
     setImages(next)
-    updateAttributes({ images: next })
+    setAttrs({ images: next })
   }
 
   function handleSetCols(n: number) {
     setCols(n)
-    updateAttributes({ cols: n })
+    setAttrs({ cols: n })
   }
 
   function handleSetRatio(v: string) {
     setRatio(v)
-    updateAttributes({ ratio: v })
+    setAttrs({ ratio: v })
   }
 
   function handleCaption(v: string) {
     setCaption(v)
-    updateAttributes({ caption: v })
+    setAttrs({ caption: v })
   }
 
   const captionInput = (img: ImageItem, i: number) => (
