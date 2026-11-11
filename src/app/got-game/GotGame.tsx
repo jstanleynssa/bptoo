@@ -28,7 +28,7 @@ function FlipCard({ char, flipped, onFlip }: { char: GotCharacter; flipped: bool
             src={char.portraitUrl}
             alt="Who is this character?"
             fill
-            className="object-cover object-top"
+            className="object-cover object-top scale-[1.06] origin-top"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
           />
           {/* Hover hint */}
