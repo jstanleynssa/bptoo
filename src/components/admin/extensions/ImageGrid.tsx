@@ -107,16 +107,6 @@ function ImageGridView({ node, updateAttributes, deleteNode, editor, getPos }: R
     setAttrs({ caption: v })
   }
 
-  const captionInput = (img: ImageItem, i: number) => (
-    <input
-      type="text"
-      value={img.caption}
-      onChange={e => updateImageCaption(i, e.target.value)}
-      placeholder="Caption…"
-      className="w-full text-xs text-zinc-300 placeholder-zinc-500 bg-transparent mt-1.5 px-0.5 focus:outline-none italic border-b border-zinc-700 focus:border-violet-400 transition-colors"
-    />
-  )
-
   return (
     <NodeViewWrapper>
       <div className="my-6 rounded-xl border border-zinc-200 overflow-hidden" contentEditable={false}>
@@ -165,8 +155,13 @@ function ImageGridView({ node, updateAttributes, deleteNode, editor, getPos }: R
                       className="absolute top-1 right-1 p-1 bg-zinc-900/70 hover:bg-red-600 rounded opacity-0 group-hover:opacity-100 transition-all text-white">
                       <X size={12} />
                     </button>
+                    <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/75 to-transparent pt-6 px-2 pb-1.5">
+                      <input type="text" value={img.caption}
+                        onChange={e => updateImageCaption(i, e.target.value)}
+                        placeholder="Caption…"
+                        className="w-full text-xs text-white/90 placeholder-white/40 bg-transparent focus:outline-none focus:placeholder-white/70 italic transition-colors" />
+                    </div>
                   </div>
-                  {captionInput(img, i)}
                 </div>
               ))}
               <button onClick={() => setPickerOpen(true)}
@@ -184,8 +179,13 @@ function ImageGridView({ node, updateAttributes, deleteNode, editor, getPos }: R
                       className="absolute top-1 right-1 p-1 bg-zinc-900/70 hover:bg-red-600 rounded opacity-0 group-hover:opacity-100 transition-all text-white">
                       <X size={12} />
                     </button>
+                    <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/75 to-transparent pt-8 px-2 pb-1.5">
+                      <input type="text" value={img.caption}
+                        onChange={e => updateImageCaption(i, e.target.value)}
+                        placeholder="Caption…"
+                        className="w-full text-xs text-white/90 placeholder-white/40 bg-transparent focus:outline-none focus:placeholder-white/70 italic transition-colors" />
+                    </div>
                   </div>
-                  {captionInput(img, i)}
                 </div>
               ))}
               <button onClick={() => setPickerOpen(true)}
