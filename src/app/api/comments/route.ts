@@ -33,6 +33,7 @@ export async function GET(req: NextRequest) {
     .select('id, parent_id, author_name, author_website, body, vote_score, is_deleted, created_at')
     .eq('content_type', contentType)
     .eq('content_slug', contentSlug)
+    .eq('is_deleted', false)
     .order('created_at', { ascending: true })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

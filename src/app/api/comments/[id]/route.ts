@@ -11,7 +11,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   // Soft delete — keep thread intact, body replaced with [removed]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase.from('comments') as any)
-    .update({ is_deleted: true, body: '[removed]', author_name: '[removed]', author_email: '' })
+    .update({ is_deleted: true, body: '[removed]', author_name: '[removed]' })
     .eq('id', id)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
