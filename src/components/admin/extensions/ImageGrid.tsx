@@ -31,7 +31,7 @@ export function parseImages(raw: unknown): ImageItem[] {
   } catch { return [] }
 }
 
-function ImageGridView({ node, updateAttributes, deleteNode, editor, getPos }: ReactNodeViewProps) {
+function ImageGridView({ node, updateAttributes, deleteNode, view, getPos }: ReactNodeViewProps) {
   const [pickerOpen, setPickerOpen] = useState(false)
 
   // Local state drives rendering immediately — updateAttributes persists to Tiptap.
@@ -54,22 +54,16 @@ function ImageGridView({ node, updateAttributes, deleteNode, editor, getPos }: R
   useEffect(() => { setRatio((node.attrs.ratio as string) ?? 'sq') }, [node.attrs.ratio])
   useEffect(() => { setCaption((node.attrs.caption as string) ?? '') }, [node.attrs.caption])
 
-  // Direct ProseMirror dispatch — bypasses the global updateAttributes command which
-  // searches within tr.selection.ranges and silently no-ops when focus has moved to
-  // a modal (e.g. MediaPicker). setNodeMarkup at the node's known position always works.
+  // Direct ProseMirror dispatch via view.dispatch+setNodeMarkup.
+  // Bypasses updateAttributes which uses the global selection-based command and
+  // silently no-ops when focus has moved to a modal (e.g. MediaPicker).
+  // view is EditorView, always available in ReactNodeViewProps.
   function setAttrs(attrs: Record<string, unknown>) {
-    if (editor && typeof getPos === 'function') {
-      const pos = getPos()
-      if (typeof pos === 'number') {
-        const { state } = editor.view
-        const current = state.doc.nodeAt(pos)
-        if (current) {
-          editor.view.dispatch(state.tr.setNodeMarkup(pos, undefined, { ...current.attrs, ...attrs }))
-          return
-        }
-      }
+    const pos = typeof getPos === 'function' ? getPos() : undefined
+    if (typeof pos === 'number') {
+      view.dispatch(view.state.tr.setNodeMarkup(pos, undefined, { ...node.attrs, ...attrs }))
+      return
     }
-    // Fallback for edge cases where editor/getPos unavailable
     updateAttributes(attrs)
   }
 
