@@ -6,7 +6,7 @@ import type { Project } from '@/lib/types'
 
 export default async function ProjectsPage() {
   const supabase = await createClient()
-  const { data } = await supabase.from('projects').select('*').eq('status', 'published').order('sort_order').order('created_at', { ascending: false })
+  const { data } = await supabase.from('projects').select('*').eq('status', 'published').order('project_date', { ascending: false }).order('created_at', { ascending: false })
   const projects = (data ?? []) as Project[]
 
   return (
