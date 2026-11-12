@@ -26,10 +26,10 @@ function ScreenplayRenderer({ lines }: { lines: ScreenplayLine[] }) {
       <div className="px-4 py-2 bg-zinc-100 border-b border-zinc-200">
         <span className="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Screenplay</span>
       </div>
-      <div className="px-10 py-6" style={{ fontFamily: '"Courier Prime", monospace', fontSize: '14px', lineHeight: '1.7', color: '#1a1a1a' }}>
+      <div className="px-10 py-6" style={{ fontFamily: '"Courier Prime", monospace', fontSize: '14px', lineHeight: '1.7', color: '#1a1a1a', whiteSpace: 'pre-wrap' }}>
         {lines.map(line => (
           <div key={line.id} style={LINE_STYLES[line.type] ?? {}}>
-            {line.text || <span className="opacity-0">·</span>}
+            {line.text || <span style={{ opacity: 0 }}>·</span>}
           </div>
         ))}
       </div>
