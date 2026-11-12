@@ -138,7 +138,7 @@ export default async function HomePage() {
 
       {/* Connector - desktop only */}
       <div className="hidden md:flex mx-auto justify-center">
-        <div className="w-px bg-black/20" style={{ height: '60px' }} />
+        <div className="w-px bg-black/20" style={{ height: '20px' }} />
       </div>
 
 
@@ -215,7 +215,7 @@ export default async function HomePage() {
 
       <div className="relative max-w-5xl mx-auto px-6">
         {featuredProjects.length > 0 && (
-          <section className="py-24 border-t border-black/10">
+          <section className="pt-10 pb-24 border-t border-black/10">
             <ScrollSection>
               <div className="flex items-end justify-between mb-12">
                 <div>
