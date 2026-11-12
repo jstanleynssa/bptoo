@@ -226,9 +226,19 @@ export const ScreenplayBlock = Node.create({
   atom: true,
   addAttributes() {
     return {
-      // rendered: false → prevents Tiptap auto-serializing lines as a plain HTML attr
-      // (which corrupts the array). Node-level getAttrs controls all parsing.
-      lines: { default: [{ id: 'initial', type: 'scene', text: '' }], rendered: false },
+      // rendered: false → new saves won't get corrupted lines="" attr.
+      // parseHTML reads data-lines explicitly — overrides the fallback that reads
+      // the corrupted legacy lines="[object Object],..." attr in existing saved HTML.
+      lines: {
+        default: [{ id: 'initial', type: 'scene', text: '' }],
+        rendered: false,
+        parseHTML: (el: HTMLElement | string) => {
+          if (typeof el === 'string') return null
+          const raw = el.getAttribute('data-lines')
+          if (!raw) return null
+          try { return JSON.parse(raw) } catch { return null }
+        },
+      },
     }
   },
   parseHTML() {
