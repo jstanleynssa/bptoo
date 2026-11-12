@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import parse, { Element, type HTMLReactParserOptions } from 'html-react-parser'
 import { parseImages } from '@/components/admin/extensions/ImageGrid'
-import { HeraldicAchievement } from '@/components/HeraldicAchievement'
+import { HeraldicAchievementSVG } from '@/components/HeraldicAchievementSVG'
 import Image from 'next/image'
 import Lightbox from '@/components/Lightbox'
 
@@ -215,8 +215,8 @@ export default function ContentRenderer({ html, className, onVideoPlay, videoPla
 
       // Heraldic Achievement
       if (domNode.attribs?.['data-heraldic'] !== undefined) {
-        const imageUrl = domNode.attribs['data-image-url'] ?? 'https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/projects/stanley-heraldic.png'
-        return <HeraldicAchievement imageUrl={imageUrl} />
+        const svgUrl = domNode.attribs['data-svg-url'] ?? 'https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/projects/stanley-heraldic.svg'
+        return <HeraldicAchievementSVG svgUrl={svgUrl} />
       }
 
       // Image grid
