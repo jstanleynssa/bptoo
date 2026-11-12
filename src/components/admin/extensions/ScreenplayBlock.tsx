@@ -2,7 +2,7 @@
 
 import { Node, mergeAttributes } from '@tiptap/core'
 import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
-import { useState, useRef, KeyboardEvent } from 'react'
+import { useState, useEffect, useRef, KeyboardEvent } from 'react'
 import { X, Plus } from 'lucide-react'
 
 type LineType = 'scene' | 'action' | 'character' | 'dialogue' | 'parenthetical' | 'transition'
@@ -58,26 +58,40 @@ const LINE_CONFIG: Record<LineType, {
 
 function uid() { return Math.random().toString(36).slice(2) }
 
-import type { ReactNodeViewProps } from '@tiptap/react'
-function ScreenplayView({ node, updateAttributes, deleteNode }: ReactNodeViewProps) {
-  // lines may come back as a JSON string from parseHTML — handle both cases
-  const rawLines = node.attrs.lines
-  const lines: ScreenplayLine[] = (() => {
-    try {
-      const parsed = typeof rawLines === 'string' ? JSON.parse(rawLines) : rawLines
-      return Array.isArray(parsed) && parsed.length > 0
-        ? parsed
-        : [{ id: uid(), type: 'scene' as LineType, text: '' }]
-    } catch {
-      return [{ id: uid(), type: 'scene' as LineType, text: '' }]
-    }
-  })()
+function parseLines(raw: unknown): ScreenplayLine[] {
+  try {
+    const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw
+    return Array.isArray(parsed) && parsed.length > 0
+      ? parsed
+      : [{ id: uid(), type: 'scene' as LineType, text: '' }]
+  } catch {
+    return [{ id: uid(), type: 'scene' as LineType, text: '' }]
+  }
+}
 
+import type { ReactNodeViewProps } from '@tiptap/react'
+function ScreenplayView({ node, updateAttributes, deleteNode, view, getPos }: ReactNodeViewProps) {
+  // Local state — same pattern as ImageGrid to handle Tiptap v3 atom node re-render issues
+  const [lines, setLines] = useState<ScreenplayLine[]>(() => parseLines(node.attrs.lines))
   const [focusedId, setFocusedId] = useState<string | null>(null)
   const refs = useRef<Record<string, HTMLTextAreaElement | null>>({})
 
+  // Sync inward on undo/redo
+  useEffect(() => { setLines(parseLines(node.attrs.lines)) }, [node.attrs.lines])
+
+  function persist(newLines: ScreenplayLine[]) {
+    // Direct dispatch — bypasses selection-based updateAttributes global command
+    const pos = typeof getPos === 'function' ? getPos() : undefined
+    if (typeof pos === 'number' && view) {
+      view.dispatch(view.state.tr.setNodeMarkup(pos, undefined, { ...node.attrs, lines: newLines }))
+    } else {
+      updateAttributes({ lines: newLines })
+    }
+  }
+
   function update(newLines: ScreenplayLine[]) {
-    updateAttributes({ lines: newLines })
+    setLines(newLines)
+    persist(newLines)
   }
 
   function setLine(id: string, text: string) {
@@ -108,7 +122,6 @@ function ScreenplayView({ node, updateAttributes, deleteNode }: ReactNodeViewPro
   function onKeyDown(e: KeyboardEvent<HTMLTextAreaElement>, line: ScreenplayLine) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      // Auto-suggest next type
       const next: Record<LineType, LineType> = {
         scene: 'action', action: 'action', character: 'dialogue',
         dialogue: 'character', parenthetical: 'dialogue', transition: 'scene',
@@ -130,8 +143,8 @@ function ScreenplayView({ node, updateAttributes, deleteNode }: ReactNodeViewPro
   return (
     <NodeViewWrapper>
       <div
-        className="my-6 rounded-xl border border-zinc-200 bg-[#FEFDF8] overflow-hidden" style={{ color: '#1a1a1a' }}
-        style={{ fontFamily: '"Courier Prime", monospace', fontSize: '13px', lineHeight: '1.6' }}
+        className="my-6 rounded-xl border border-zinc-200 bg-[#FEFDF8] overflow-hidden"
+        style={{ fontFamily: '"Courier Prime", monospace', fontSize: '13px', lineHeight: '1.6', color: '#1a1a1a' }}
         contentEditable={false}
       >
         {/* Header */}
@@ -174,6 +187,11 @@ function ScreenplayView({ node, updateAttributes, deleteNode }: ReactNodeViewPro
                   onBlur={() => setFocusedId(null)}
                   onChange={e => setLine(line.id, e.target.value)}
                   onKeyDown={e => onKeyDown(e, line)}
+                  onInput={e => {
+                    const el = e.currentTarget
+                    el.style.height = 'auto'
+                    el.style.height = el.scrollHeight + 'px'
+                  }}
                   rows={1}
                   className="w-full bg-transparent border-0 outline-none resize-none overflow-hidden placeholder-zinc-300"
                   style={{
@@ -183,11 +201,6 @@ function ScreenplayView({ node, updateAttributes, deleteNode }: ReactNodeViewPro
                     lineHeight: '1.6',
                     color: '#1a1a1a',
                     height: 'auto',
-                  }}
-                  onInput={e => {
-                    const el = e.currentTarget
-                    el.style.height = 'auto'
-                    el.style.height = el.scrollHeight + 'px'
                   }}
                 />
               </div>
@@ -213,15 +226,18 @@ export const ScreenplayBlock = Node.create({
   atom: true,
   addAttributes() {
     return {
-      lines: { default: [{ id: 'initial', type: 'scene', text: '' }] },
+      // rendered: false → prevents Tiptap auto-serializing lines as a plain HTML attr
+      // (which corrupts the array). Node-level getAttrs controls all parsing.
+      lines: { default: [{ id: 'initial', type: 'scene', text: '' }], rendered: false },
     }
   },
   parseHTML() {
     return [{
       tag: 'div[data-screenplay]',
-      getAttrs: (dom: HTMLElement) => ({
-        lines: JSON.parse(dom.getAttribute('data-lines') || '[]'),
-      }),
+      getAttrs: (dom: HTMLElement | string) => {
+        if (typeof dom === 'string') return {}
+        return { lines: JSON.parse(dom.getAttribute('data-lines') || '[]') }
+      },
     }]
   },
   renderHTML({ HTMLAttributes, node }) {
