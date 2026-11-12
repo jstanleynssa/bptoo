@@ -45,6 +45,12 @@ export default function MediaPicker({ onSelect, onSelectMultiple, onClose }: Med
           } as unknown as MediaFile)
         })
     }
+    // Sort globally newest-first so recent uploads from any folder surface at the top
+    allFiles.sort((a, b) => {
+      const aTime = a.created_at ? new Date(a.created_at).getTime() : 0
+      const bTime = b.created_at ? new Date(b.created_at).getTime() : 0
+      return bTime - aTime
+    })
     setFiles(allFiles)
     setLoading(false)
   }, [supabase])
