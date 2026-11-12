@@ -151,14 +151,12 @@ export function HeraldicAchievementSVG({ svgUrl }: { svgUrl: string }) {
             brightness(1.08);
         }
         @keyframes heraldic-pop {
-          0%   { transform: scale(0.6); opacity: 0; }
-          55%  { transform: scale(1.07); opacity: 1; }
-          75%  { transform: scale(0.96); }
-          90%  { transform: scale(1.02); }
+          0%   { transform: scale(0.88); opacity: 0; }
+          65%  { transform: scale(1.03); opacity: 1; }
           100% { transform: scale(1);    opacity: 1; }
         }
         .heraldic-tooltip {
-          animation: heraldic-pop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          animation: heraldic-pop 0.18s ease-out forwards;
           transform-origin: bottom left;
         }
       `}</style>
