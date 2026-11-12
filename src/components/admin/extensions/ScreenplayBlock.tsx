@@ -130,7 +130,7 @@ function ScreenplayView({ node, updateAttributes, deleteNode }: ReactNodeViewPro
   return (
     <NodeViewWrapper>
       <div
-        className="my-6 rounded-xl border border-zinc-200 bg-[#FEFDF8] overflow-hidden"
+        className="my-6 rounded-xl border border-zinc-200 bg-[#FEFDF8] overflow-hidden" style={{ color: '#1a1a1a' }}
         style={{ fontFamily: '"Courier Prime", monospace', fontSize: '13px', lineHeight: '1.6' }}
         contentEditable={false}
       >
@@ -181,6 +181,13 @@ function ScreenplayView({ node, updateAttributes, deleteNode }: ReactNodeViewPro
                     fontFamily: '"Courier Prime", monospace',
                     fontSize: '13px',
                     lineHeight: '1.6',
+                    color: '#1a1a1a',
+                    height: 'auto',
+                  }}
+                  onInput={e => {
+                    const el = e.currentTarget
+                    el.style.height = 'auto'
+                    el.style.height = el.scrollHeight + 'px'
                   }}
                 />
               </div>
