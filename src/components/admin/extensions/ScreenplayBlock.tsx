@@ -79,6 +79,13 @@ function ScreenplayView({ node, updateAttributes, deleteNode, view, getPos }: Re
   // Sync inward on undo/redo
   useEffect(() => { setLines(parseLines(node.attrs.lines)) }, [node.attrs.lines])
 
+  // Auto-resize all textareas after lines load
+  useEffect(() => {
+    Object.values(refs.current).forEach(el => {
+      if (el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px' }
+    })
+  }, [lines])
+
   function persist(newLines: ScreenplayLine[]) {
     // Direct dispatch — bypasses selection-based updateAttributes global command
     const pos = typeof getPos === 'function' ? getPos() : undefined

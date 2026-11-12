@@ -22,11 +22,11 @@ const LINE_STYLES: Record<LineType, React.CSSProperties> = {
 
 function ScreenplayRenderer({ lines }: { lines: ScreenplayLine[] }) {
   return (
-    <div className="my-8 rounded-xl border border-white/10 bg-white/5 overflow-hidden not-prose">
-      <div className="px-4 py-2 bg-white/5 border-b border-white/10">
-        <span className="text-xs font-semibold text-white/40 uppercase tracking-widest">Screenplay</span>
+    <div className="my-8 rounded-xl border border-zinc-200 bg-white overflow-hidden not-prose">
+      <div className="px-4 py-2 bg-zinc-100 border-b border-zinc-200">
+        <span className="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Screenplay</span>
       </div>
-      <div className="px-10 py-6" style={{ fontFamily: '"Courier Prime", monospace', fontSize: '14px', lineHeight: '1.7', color: 'inherit' }}>
+      <div className="px-10 py-6" style={{ fontFamily: '"Courier Prime", monospace', fontSize: '14px', lineHeight: '1.7', color: '#1a1a1a' }}>
         {lines.map(line => (
           <div key={line.id} style={LINE_STYLES[line.type] ?? {}}>
             {line.text || <span className="opacity-0">·</span>}
