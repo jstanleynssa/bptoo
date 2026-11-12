@@ -6,6 +6,7 @@ import { X, Loader2, Check } from 'lucide-react'
 import Image from 'next/image'
 
 interface MediaFile {
+  created_at?: string | null
   name: string
   id: string
   publicUrl: string
