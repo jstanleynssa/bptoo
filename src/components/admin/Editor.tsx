@@ -5,6 +5,7 @@ import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
 import { ScreenplayBlock } from '@/components/admin/extensions/ScreenplayBlock'
+import { HeraldicBlock } from '@/components/admin/extensions/HeraldicBlock'
 import { VideoEmbedNode } from '@/components/admin/extensions/VideoEmbed'
 import { ImageGridNode } from '@/components/admin/extensions/ImageGrid'
 import { FigureNode } from '@/components/admin/extensions/FigureNode'
@@ -16,7 +17,7 @@ import {
   Bold, Italic, Strikethrough, Code, Heading2, Heading3,
   List, ListOrdered, Quote, Minus, Link as LinkIcon,
   Undo, Redo, Code2, Film, Images, Clapperboard,
-  Table as TableIcon, RowsIcon, Columns3, Trash2, ImagePlus,
+  Table as TableIcon, RowsIcon, Columns3, Trash2, ImagePlus, Shield,
 } from 'lucide-react'
 import { useCallback } from 'react'
 
@@ -59,6 +60,7 @@ export default function Editor({ content, onChange, placeholder = 'Write somethi
     extensions: [
       StarterKit,
       ScreenplayBlock,
+        HeraldicBlock,
       VideoEmbedNode,
       ImageGridNode,
       FigureNode,
@@ -136,6 +138,7 @@ export default function Editor({ content, onChange, placeholder = 'Write somethi
         <ToolbarButton onClick={() => editor.chain().focus().insertContent({ type: 'imageGrid', attrs: { srcs: [], cols: 2 } }).run()} active={false} title="Image grid"><Images size={15} /></ToolbarButton>
         <ToolbarButton onClick={() => editor.chain().focus().insertContent({ type: 'videoEmbed', attrs: { src: '' } }).run()} active={false} title="Video embed"><Film size={15} /></ToolbarButton>
         <ToolbarButton onClick={() => editor.chain().focus().insertContent({ type: 'screenplayBlock', attrs: { lines: [{ id: Date.now().toString(), type: 'scene', text: '' }] } }).run()} active={false} title="Screenplay block"><Clapperboard size={15} /></ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().insertContent({ type: 'heraldic', attrs: { imageUrl: 'https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/projects/stanley-heraldic.png' } }).run()} active={false} title="Heraldic achievement"><Shield size={15} /></ToolbarButton>
         <ToolbarButton onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} active={false} title="Table"><TableIcon size={15} /></ToolbarButton>
         {isInTable && (
           <>
