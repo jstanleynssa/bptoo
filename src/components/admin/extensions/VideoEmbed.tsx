@@ -11,7 +11,7 @@ function embedUrl(url: string): string | null {
   if (yt) return `https://www.youtube.com/embed/${yt[1]}`
   const vm = url.match(/vimeo\.com\/(\d+)/)
   if (vm) return `https://player.vimeo.com/video/${vm[1]}`
-  if (url.match(/\.(mp4|webm|ogg)$/i)) return url
+  if (url.match(/\.(mp4|webm|ogg|mov|m4v|avi)$/i)) return url
   return null
 }
 
@@ -61,7 +61,7 @@ function VideoEmbedView({ node, updateAttributes, deleteNode }: ReactNodeViewPro
             </button>
           </div>
         ) : embed ? (
-          url.match(/\.(mp4|webm|ogg)$/i) ? (
+          url.match(/\.(mp4|webm|ogg|mov|m4v|avi)$/i) ? (
             <video controls className="w-full aspect-video bg-black">
               <source src={embed} />
             </video>

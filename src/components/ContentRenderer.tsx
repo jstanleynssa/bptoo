@@ -53,7 +53,7 @@ function VideoRenderer({ src, onPlay }: { src: string; onPlay?: () => void }) {
   if (!embed) return null
   return (
     <div className="my-8 not-prose">
-      {src.match(/\.(mp4|webm|ogg)$/i) ? (
+      {src.match(/\.(mp4|webm|ogg|mov|m4v|avi)$/i) ? (
         <video controls className="w-full rounded-2xl aspect-video bg-black" onPlay={onPlay}>
           <source src={embed} />
         </video>
