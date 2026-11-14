@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
 import MobileNav from '@/components/MobileNav'
 
 const NAV_LINKS = [
@@ -15,15 +14,23 @@ export const revalidate = 300 // refresh hours count every 5 minutes
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   // Total hours across all published projects
+  // Fetch hours directly via REST API (more reliable in layout context than createClient)
   let totalHours = 0
   try {
-    const supabase = await createClient()
-    const { data } = await supabase
-      .from('projects')
-      .select('hours_spent')
-      .eq('status', 'published')
-      .not('hours_spent', 'is', null)
-    totalHours = Math.round((data ?? []).reduce((sum, p) => sum + (p.hours_spent ?? 0), 0))
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/projects?select=hours_spent&status=eq.published&hours_spent=not.is.null`,
+      {
+        headers: {
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+        },
+        next: { revalidate: 300 },
+      }
+    )
+    if (res.ok) {
+      const data = await res.json() as { hours_spent: number }[]
+      totalHours = Math.round(data.reduce((sum, p) => sum + (p.hours_spent ?? 0), 0))
+    }
   } catch {}
 
   return (
