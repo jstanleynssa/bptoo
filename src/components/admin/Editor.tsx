@@ -6,6 +6,7 @@ import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
 import { ScreenplayBlock } from '@/components/admin/extensions/ScreenplayBlock'
 import { HeraldicBlock } from '@/components/admin/extensions/HeraldicBlock'
+import { NovelExcerptNode } from '@/components/admin/extensions/NovelExcerpt'
 import { VideoEmbedNode } from '@/components/admin/extensions/VideoEmbed'
 import { ImageGridNode } from '@/components/admin/extensions/ImageGrid'
 import { FigureNode } from '@/components/admin/extensions/FigureNode'
@@ -17,7 +18,7 @@ import {
   Bold, Italic, Strikethrough, Code, Heading2, Heading3,
   List, ListOrdered, Quote, Minus, Link as LinkIcon,
   Undo, Redo, Code2, Film, Images, Clapperboard,
-  Table as TableIcon, RowsIcon, Columns3, Trash2, ImagePlus, Shield,
+  Table as TableIcon, RowsIcon, Columns3, Trash2, ImagePlus, Shield, BookOpen,
 } from 'lucide-react'
 import { useCallback } from 'react'
 
@@ -61,6 +62,7 @@ export default function Editor({ content, onChange, placeholder = 'Write somethi
       StarterKit,
       ScreenplayBlock,
         HeraldicBlock,
+        NovelExcerptNode,
       VideoEmbedNode,
       ImageGridNode,
       FigureNode,
@@ -139,6 +141,7 @@ export default function Editor({ content, onChange, placeholder = 'Write somethi
         <ToolbarButton onClick={() => editor.chain().focus().insertContent({ type: 'videoEmbed', attrs: { src: '' } }).run()} active={false} title="Video embed"><Film size={15} /></ToolbarButton>
         <ToolbarButton onClick={() => editor.chain().focus().insertContent({ type: 'screenplayBlock', attrs: { lines: [{ id: Date.now().toString(), type: 'scene', text: '' }] } }).run()} active={false} title="Screenplay block"><Clapperboard size={15} /></ToolbarButton>
         <ToolbarButton onClick={() => editor.chain().focus().insertContent({ type: 'heraldic', attrs: { svgUrl: 'https://pqaqwpclwutngudlgxzf.supabase.co/storage/v1/object/public/media/projects/stanley-heraldic.svg' } }).run()} active={false} title="Heraldic achievement"><Shield size={15} /></ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().insertContent({ type: 'novelExcerpt', attrs: {} }).run()} active={false} title="Novel excerpt"><BookOpen size={15} /></ToolbarButton>
         <ToolbarButton onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} active={false} title="Table"><TableIcon size={15} /></ToolbarButton>
         {isInTable && (
           <>
