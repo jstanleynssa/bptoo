@@ -28,7 +28,10 @@ export const TOOLS: Tool[] = [
   { id: 'camera',       label: 'Video Camera', emoji: '🎥',  color: '#8B9196',                               description: 'Video production & cinematography' },
   { id: 'iphone',       label: 'iPhone',       emoji: '📱',  color: '#6E6E73', domain: 'apple.com',          description: 'Shot or edited on iPhone' },
   { id: '3dprint',      label: '3D Printing',  emoji: '🖨️', color: '#E76F51',                               description: 'Additive manufacturing & rapid prototyping' },
+  { id: 'elegoo',       label: 'Elegoo',       emoji: '🖨️', color: '#3A86FF', domain: 'elegoo.com',          description: 'Resin & FDM 3D printer used for models & prototypes' },
+  { id: 'blender',      label: 'Blender',      emoji: '🎨',  color: '#E87D0D', domain: 'blender.org',         description: '3D modeling, sculpting, animation & rendering' },
   { id: 'sewing',       label: 'Sewing',       emoji: '🧵',  color: '#E63946',                               description: 'Hand or machine sewing & fabric work' },
+  { id: 'woodworking',  label: 'Woodworking',  emoji: '🪵',  color: '#8B4513',                               description: 'Hand & power tool woodworking and carpentry' },
   // ── AI / digital ─────────────────────────────────────────────────────────
   { id: 'ai',           label: 'AI Tools',     emoji: '🤖',  color: '#8B5CF6',                               description: 'AI-assisted creation & automation' },
   { id: 'midjourney',   label: 'Midjourney',   emoji: '🎨',  color: '#7B61FF', domain: 'midjourney.com',     description: 'AI image generation from text prompts' },
@@ -45,6 +48,7 @@ export const TOOLS: Tool[] = [
   { id: 'gptimage',     label: 'GPT Image',    emoji: '🖼️', color: '#10A37F', domain: 'openai.com',            description: "OpenAI's AI image generation" },
   { id: 'nanobanana',   label: 'Nano Banana',  emoji: '🍌',  color: '#FFD93D',                               description: 'AI image generation model' },
   // ── Dev / design ─────────────────────────────────────────────────────────
+  { id: 'finaldraft',   label: 'Final Draft',  emoji: '📝',  color: '#0066CC', domain: 'finaldraft.com',      description: 'Industry-standard screenwriting software' },
   { id: 'code',         label: 'Custom Code',  emoji: '💻',  color: '#4B9CE2',                               description: 'Hand-written software & scripting' },
   { id: 'figma',        label: 'Figma',        emoji: '🎯',  color: '#F24E1E', domain: 'figma.com',          description: 'Collaborative UI design & prototyping' },
   { id: 'davinci',      label: 'DaVinci Resolve', abbr: 'DV', color: '#FFB400', bg: '#1A1A2E',               description: 'Professional video editing & color grading' },
