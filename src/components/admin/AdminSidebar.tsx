@@ -27,6 +27,7 @@ const nav = [
   { href: '/admin/mood', label: 'Mood', icon: Activity },
   { href: '/admin/comments', label: 'Comments', icon: MessageSquare },
   { href: '/admin/homepage', label: 'Homepage', icon: Home },
+  { href: '/admin/about', label: 'About', icon: User },
 ]
 
 export default function AdminSidebar() {
