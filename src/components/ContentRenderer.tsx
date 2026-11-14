@@ -123,6 +123,34 @@ interface ContentRendererProps {
   videoPlaySlug?: string  // pass slug to auto-call the play API
 }
 
+
+function NovelExcerptRenderer({ bookTitle, chapterTitle, locationLines, body, pageNumber }: {
+  bookTitle: string; chapterTitle: string; locationLines: string; body: string; pageNumber: string
+}) {
+  const FONT = "'EB Garamond', Garamond, 'Times New Roman', Georgia, serif"
+  const paragraphs = body.split(/\n\n+/).filter(Boolean)
+  const locationLineArr = locationLines.split('\n').filter(Boolean)
+  return (
+    <div className="my-10 not-prose">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap');
+        .novel-drop-cap::first-letter { font-size:4.5em;line-height:0.75;float:left;margin-right:0.1em;font-weight:700;color:#1a1a1a; }
+      `}</style>
+      <div style={{ fontFamily: FONT, color: '#1a1a1a', background: '#fff', maxWidth: '640px', margin: '0 auto', padding: '48px 64px', boxShadow: '0 4px 40px rgba(0,0,0,0.12)', borderRadius: '4px' }}>
+        {bookTitle && <p style={{ textAlign: 'center', fontSize: '11px', letterSpacing: '0.15em', fontStyle: 'italic', color: '#999', marginBottom: '56px' }}>{bookTitle}</p>}
+        {chapterTitle && <p style={{ textAlign: 'right', fontSize: '26px', fontWeight: 700, marginBottom: '72px' }}>{chapterTitle}</p>}
+        {locationLineArr.length > 0 && <div style={{ marginBottom: '32px' }}>{locationLineArr.map((l, i) => <p key={i} style={{ fontSize: '14px', lineHeight: '1.65', margin: 0 }}>{l}</p>)}</div>}
+        <div style={{ fontSize: '14px', lineHeight: '1.7' }}>
+          {paragraphs.map((p, i) => (
+            <p key={i} className={i === 0 ? 'novel-drop-cap' : ''} style={{ textAlign: 'justify', textIndent: i === 0 ? 0 : '2em', margin: 0 }}>{p}</p>
+          ))}
+        </div>
+        {pageNumber && <p style={{ textAlign: 'center', fontSize: '13px', color: '#888', marginTop: '32px', paddingTop: '16px', borderTop: '1px solid #eee' }}>{pageNumber}</p>}
+      </div>
+    </div>
+  )
+}
+
 export default function ContentRenderer({ html, className, onVideoPlay, videoPlaySlug }: ContentRendererProps) {
   const handleVideoPlay = onVideoPlay ?? (videoPlaySlug
     ? () => { fetch(`/api/projects/${videoPlaySlug}/play`, { method: 'POST' }).catch(() => {}) }
@@ -211,6 +239,17 @@ export default function ContentRenderer({ html, className, onVideoPlay, videoPla
             )}
           </>
         )
+      }
+
+      // Novel Excerpt
+      if (domNode.attribs?.['data-novel-excerpt'] !== undefined) {
+        return <NovelExcerptRenderer
+          bookTitle={domNode.attribs['data-book-title'] ?? ''}
+          chapterTitle={domNode.attribs['data-chapter-title'] ?? ''}
+          locationLines={domNode.attribs['data-location-lines'] ?? ''}
+          body={domNode.attribs['data-body'] ?? ''}
+          pageNumber={domNode.attribs['data-page-number'] ?? ''}
+        />
       }
 
       // Heraldic Achievement
