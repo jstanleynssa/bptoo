@@ -14,8 +14,7 @@ import {
   MessageSquare,
   Home,
   Globe,
-  LogOut,
-} from 'lucide-react'
+  LogOut, User } from 'lucide-react'
 
 const nav = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
