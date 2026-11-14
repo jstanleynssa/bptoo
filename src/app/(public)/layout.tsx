@@ -37,15 +37,22 @@ export default async function PublicLayout({ children }: { children: React.React
     <div className="min-h-screen bg-[#0A0A0A] text-white">
       <header className="relative border-b border-white/10 sticky top-0 z-50 bg-[#0A0A0A]/95 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex flex-col leading-none">
+          <div className="flex items-baseline gap-3">
             <Link href="/" style={{ fontFamily: 'Peralta, serif' }}
               className="text-xl text-white hover:text-white/60 transition-colors">
               bptoo
             </Link>
             {totalHours > 0 && (
-              <span className="text-[10px] text-white/30 tracking-widest uppercase mt-1">
-                {totalHours.toLocaleString()} hours
-              </span>
+              <div className="relative group">
+                <span style={{ fontFamily: 'Peralta, serif', color: '#FACD40' }}
+                  className="text-sm cursor-help whitespace-nowrap">
+                  {totalHours.toLocaleString()} hours and counting
+                </span>
+                {/* Tooltip */}
+                <div className="absolute left-0 top-6 z-50 w-64 p-3 bg-zinc-900 border border-zinc-700 rounded-xl text-xs text-white/70 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-2xl">
+                  The total hours Jason has spent on published projects — across art, writing, building, 3D printing, and design.
+                </div>
+              </div>
             )}
           </div>
 
