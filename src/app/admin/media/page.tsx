@@ -156,6 +156,15 @@ export default function MediaPage() {
                     className="object-cover"
                     sizes="200px"
                   />
+                ) : (file.metadata.mimetype?.startsWith('video/') || /\.(mp4|webm|mov|m4v|avi)$/i.test(file.name)) ? (
+                  <video
+                    src={file.publicUrl}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    muted
+                    playsInline
+                    preload="metadata"
+                    onLoadedMetadata={e => { e.currentTarget.currentTime = 1 }}
+                  />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center text-zinc-600">
                     <ImageIcon size={32} />
