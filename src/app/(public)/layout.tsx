@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
 import MobileNav from '@/components/MobileNav'
 
 const NAV_LINKS = [
@@ -10,7 +11,21 @@ const NAV_LINKS = [
   { href: '/mood', label: 'The Wave' },
 ]
 
-export default function PublicLayout({ children }: { children: React.ReactNode }) {
+export const revalidate = 300 // refresh hours count every 5 minutes
+
+export default async function PublicLayout({ children }: { children: React.ReactNode }) {
+  // Total hours across all published projects
+  let totalHours = 0
+  try {
+    const supabase = await createClient()
+    const { data } = await supabase
+      .from('projects')
+      .select('hours_spent')
+      .eq('status', 'published')
+      .not('hours_spent', 'is', null)
+    totalHours = Math.round((data ?? []).reduce((sum, p) => sum + (p.hours_spent ?? 0), 0))
+  } catch {}
+
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-white">
       <header className="relative border-b border-white/10 sticky top-0 z-50 bg-[#0A0A0A]/95 backdrop-blur-sm">
@@ -45,7 +60,14 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <div className="h-2 w-full bg-[#FACD40]" />
       <footer className="max-w-5xl mx-auto px-6 py-10 flex items-center justify-between text-white/30 text-sm">
         <span style={{ fontFamily: 'Peralta, serif' }} className="text-white/60">bptoo</span>
-        <span>© {new Date().getFullYear()} Jason Stanley</span>
+        <span>
+          © {new Date().getFullYear()} Jason Stanley
+          {totalHours > 0 && (
+            <span className="block text-center text-white/20 text-xs mt-1">
+              {totalHours.toLocaleString()} hours and counting
+            </span>
+          )}
+        </span>
         <Link href="/admin" className="hover:text-white/60 transition-colors">Admin</Link>
       </footer>
     </div>
