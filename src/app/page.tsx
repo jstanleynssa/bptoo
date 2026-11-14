@@ -71,7 +71,7 @@ export default async function HomePage() {
 
   return (
     <div style={{ backgroundColor: '#FACD40', minHeight: '100vh' }}>
-      <SiteNav />
+      <SiteNav totalHours={totalHours} />
 
       {/* Space so brain clears the sticky nav */}
       <div className="hidden md:block" style={{ height: '72px' }} />
@@ -310,12 +310,8 @@ export default async function HomePage() {
           </section>
         )}
       </div>
-
-      <p className="text-center text-black/40 text-sm pb-2 max-w-5xl mx-auto px-6" style={{ fontFamily: 'Peralta, serif' }}>
-        Bipolar, too. And a whole lot more.
-      </p>
       <footer className="max-w-5xl mx-auto px-6 py-10 flex items-center justify-between text-black/40 text-sm border-t border-black/10">
-        <span style={{ fontFamily: 'Peralta, serif' }} className="text-black/60">bptoo</span>
+        <span style={{ fontFamily: 'Peralta, serif' }} className="text-black/50 text-xs">Bipolar, too. And a whole lot more.</span>
         <span>© {new Date().getFullYear()} Jason Stanley</span>
         <Link href="/admin" className="hover:text-black/60 transition-colors">Admin</Link>
       </footer>
