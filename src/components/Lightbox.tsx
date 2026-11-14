@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useRef } from 'react'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface LightboxProps {
@@ -24,6 +24,17 @@ export default function Lightbox({ src, srcs = [], alt, onClose, onNavigate }: L
     if (hasNext && onNavigate) onNavigate(srcs[idx + 1])
   }, [hasNext, idx, srcs, onNavigate])
 
+  const touchStartX = useRef(0)
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX
+  }
+  function handleTouchEnd(e: React.TouchEvent) {
+    const dx = e.changedTouches[0].clientX - touchStartX.current
+    if (Math.abs(dx) < 40) return
+    if (dx < 0) next()   // swipe left → next
+    if (dx > 0) prev()   // swipe right → prev
+  }
+
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') onClose()
@@ -39,7 +50,9 @@ export default function Lightbox({ src, srcs = [], alt, onClose, onNavigate }: L
   }, [onClose, prev, next])
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-10"
+    <div onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-10"
       onClick={onClose}>
       <div className="absolute inset-0 bg-black/90 backdrop-blur-sm" />
 

@@ -46,7 +46,7 @@ export default async function PublicLayout({ children }: { children: React.React
               <div className="relative group">
                 <span style={{ fontFamily: 'Peralta, serif', color: '#FACD40' }}
                   className="text-sm cursor-help whitespace-nowrap">
-                  {totalHours.toLocaleString()} hours and counting
+                  {totalHours.toLocaleString()} hours… and counting
                 </span>
                 {/* Tooltip */}
                 <div className="absolute left-0 top-6 z-50 w-64 p-3 bg-zinc-900 border border-zinc-700 rounded-xl text-xs text-white/70 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-2xl">
@@ -74,13 +74,9 @@ export default async function PublicLayout({ children }: { children: React.React
       <main className="max-w-5xl mx-auto px-6 py-12 md:py-16">
         {children}
       </main>
-
-      <p className="text-center text-white/40 text-sm pb-2" style={{ fontFamily: 'Peralta, serif' }}>
-        Bipolar, too. And a whole lot more.
-      </p>
       <div className="h-2 w-full bg-[#FACD40]" />
       <footer className="max-w-5xl mx-auto px-6 py-10 flex items-center justify-between text-white/30 text-sm">
-        <span style={{ fontFamily: 'Peralta, serif' }} className="text-white/60">bptoo</span>
+        <span style={{ fontFamily: 'Peralta, serif' }} className="text-white/50 text-xs">Bipolar, too. And a whole lot more.</span>
         <span>© {new Date().getFullYear()} Jason Stanley</span>
         <Link href="/admin" className="hover:text-white/60 transition-colors">Admin</Link>
       </footer>

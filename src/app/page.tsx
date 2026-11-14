@@ -76,15 +76,7 @@ export default async function HomePage() {
       {/* Space so brain clears the sticky nav */}
       <div className="hidden md:block" style={{ height: '72px' }} />
 
-      {/* Hours tally — homepage black version */}
-      {totalHours > 0 && (
-        <div className="text-center pt-4 pb-0 px-4 hidden md:block">
-          <span style={{ fontFamily: 'Peralta, serif', color: '#1a1a1a' }}
-            className="text-sm opacity-50">
-            {totalHours.toLocaleString()} hours and counting
-          </span>
-        </div>
-      )}
+
 
       {/* ── Desktop: Illustration + bracketing blocks ── */}
       <div

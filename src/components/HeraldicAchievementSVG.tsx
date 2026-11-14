@@ -64,7 +64,7 @@ const HERALD_DATA: Record<string, HeraldInfo> = {
   motto: {
     name: 'Motto',
     description: 'In heraldry, a motto is often found below the shield on a decorative, flat, ribboned scroll. The text variety of mottos possessed a coat of arms to complete the full achievement.',
-    stanleyNote: 'The Latin phrase Quantum ab eis gradibus victoria means "Success From One Step for All".',
+    stanleyNote: 'The Stanley motto is "Respect for One, Respect for All." Latin: Quantum ad unum, quantum ad omnes.',
   },
   order: {
     name: 'Order',
