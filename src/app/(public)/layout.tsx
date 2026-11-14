@@ -50,7 +50,7 @@ export default async function PublicLayout({ children }: { children: React.React
                 </span>
                 {/* Tooltip */}
                 <div className="absolute left-0 top-6 z-50 w-64 p-3 bg-zinc-900 border border-zinc-700 rounded-xl text-xs text-white/70 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-2xl">
-                  The total hours Jason has spent on published projects — across art, writing, building, 3D printing, and design.
+                  The total hours I have spent on published projects — across art, writing, building, 3D printing, and design.
                 </div>
               </div>
             )}

@@ -31,6 +31,25 @@ const GAP = 24
 export default async function HomePage() {
   const supabase = await createClient()
 
+  // Fetch total hours across published projects
+  let totalHours = 0
+  try {
+    const hoursRes = await fetch(
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/projects?select=hours_spent&status=eq.published&hours_spent=not.is.null`,
+      {
+        headers: {
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+        },
+        next: { revalidate: 300 },
+      }
+    )
+    if (hoursRes.ok) {
+      const hoursData = await hoursRes.json() as { hours_spent: number }[]
+      totalHours = Math.round(hoursData.reduce((sum, p) => sum + (p.hours_spent ?? 0), 0))
+    }
+  } catch {}
+
   // Fetch editable homepage blocks
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: blocksData } = await (supabase.from('homepage_blocks') as any).select('*').order('id')
@@ -56,6 +75,16 @@ export default async function HomePage() {
 
       {/* Space so brain clears the sticky nav */}
       <div className="hidden md:block" style={{ height: '72px' }} />
+
+      {/* Hours tally — homepage black version */}
+      {totalHours > 0 && (
+        <div className="text-center pt-4 pb-0 px-4 hidden md:block">
+          <span style={{ fontFamily: 'Peralta, serif', color: '#1a1a1a' }}
+            className="text-sm opacity-50">
+            {totalHours.toLocaleString()} hours and counting
+          </span>
+        </div>
+      )}
 
       {/* ── Desktop: Illustration + bracketing blocks ── */}
       <div
