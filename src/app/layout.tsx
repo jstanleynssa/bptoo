@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { GoogleTagManager } from '@next/third-parties/google'
 import { Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
+    <GoogleTagManager gtmId="GTM-PNRFBGK6" />
     <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
