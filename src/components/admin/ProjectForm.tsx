@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import Editor from '@/components/admin/Editor'
 import ImageUpload from '@/components/admin/ImageUpload'
@@ -10,7 +11,7 @@ import AttachmentUpload, { type Attachment } from '@/components/admin/Attachment
 import { Project } from '@/lib/types'
 import slugify from 'slugify'
 import { toast } from 'sonner'
-import { Save, Send, Trash2, Loader2, Upload } from 'lucide-react'
+import { Save, Send, Trash2, Loader2, Upload, Layers, ChevronRight } from 'lucide-react'
 import { TOOLS } from '@/lib/tools'
 import ToolBadge from '@/components/ToolBadge'
 
@@ -142,25 +143,25 @@ export default function ProjectForm({ project }: { project?: Project }) {
             {status === 'published' ? 'Update' : 'Publish'}
           </button>
         </div>
+      </div>
 
-          {/* Series grouping */}
-          <div className="grid grid-cols-2 gap-3">
+
+      {/* Stages */}
+      {!isNew && (
+        <div className="mb-6 p-4 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Layers size={18} className="text-violet-400" />
             <div>
-              <label className="block text-xs text-zinc-500 mb-1.5 uppercase tracking-wider">Series slug</label>
-              <input type="text" value={seriesSlug}
-                onChange={e => setSeriesSlug(e.target.value)}
-                placeholder="e.g. hardy-boys-dev"
-                className="w-full px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:border-violet-500 outline-none transition-colors" />
-            </div>
-            <div>
-              <label className="block text-xs text-zinc-500 mb-1.5 uppercase tracking-wider">Series order</label>
-              <input type="number" value={seriesOrder}
-                onChange={e => setSeriesOrder(e.target.value)}
-                placeholder="1" min="1"
-                className="w-full px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:border-violet-500 outline-none transition-colors" />
+              <p className="text-sm font-medium text-zinc-200">Project Stages</p>
+              <p className="text-xs text-zinc-500">Document progress in sequential stages</p>
             </div>
           </div>
-      </div>
+          <Link href={`/admin/projects/${project!.id}/stages`}
+            className="flex items-center gap-1 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-sm text-zinc-300 transition-colors">
+            Manage stages <ChevronRight size={14} />
+          </Link>
+        </div>
+      )}
 
       {/* Title + slug */}
       <div className="space-y-4 mb-6">
@@ -243,6 +244,24 @@ export default function ProjectForm({ project }: { project?: Project }) {
                   placeholder="e.g. 24"
                   className="w-32 px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:border-violet-500 outline-none transition-colors" />
                 <span className="text-sm text-zinc-500">hours</span>
+              </div>
+            </div>
+
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm text-zinc-400 mb-2">Series slug <span className="text-zinc-600">(optional)</span></label>
+                <input type="text" value={seriesSlug}
+                  onChange={e => setSeriesSlug(e.target.value)}
+                  placeholder="e.g. pit-project"
+                  className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:border-violet-500 outline-none transition-colors" />
+              </div>
+              <div>
+                <label className="block text-sm text-zinc-400 mb-2">Series order <span className="text-zinc-600">(optional)</span></label>
+                <input type="number" value={seriesOrder}
+                  onChange={e => setSeriesOrder(e.target.value)}
+                  placeholder="1" min="1"
+                  className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:border-violet-500 outline-none transition-colors" />
               </div>
             </div>
 
