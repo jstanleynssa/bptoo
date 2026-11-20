@@ -142,7 +142,7 @@ export default async function ProjectStagePage({
         </div>
       </nav>
 
-      <div className="mt-20 pt-8 border-t border-white/5">
+      <div className="mt-8">
         <CommentsSection contentType="project" contentSlug={`${slug}-stage-${orderNum}`} />
       </div>
     </article>
