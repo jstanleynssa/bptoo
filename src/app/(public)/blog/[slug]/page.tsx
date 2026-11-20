@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { format } from 'date-fns'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import type { Post, Category } from '@/lib/types'
 import ContentRenderer from '@/components/ContentRenderer'
 import CommentsSection from '@/components/CommentsSection'
@@ -23,6 +23,29 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   if (!data) notFound()
   const post = data as PostRow
+  const seriesSlug = (post as any).series_slug as string | null
+  const seriesOrder = (post as any).series_order as number | null
+
+  let prevSeriesPost: { title: string; slug: string } | null = null
+  let nextSeriesPost: { title: string; slug: string } | null = null
+  let seriesTotal = 0
+
+  if (seriesSlug && seriesOrder) {
+    const [prevRes, nextRes, countRes] = await Promise.all([
+      supabase.from('posts').select('title, slug').eq('status', 'published')
+        .eq('series_slug', seriesSlug).eq('series_order', seriesOrder - 1).maybeSingle(),
+      supabase.from('posts').select('title, slug').eq('status', 'published')
+        .eq('series_slug', seriesSlug).eq('series_order', seriesOrder + 1).maybeSingle(),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase.from('posts') as any).select('id', { count: 'exact', head: true })
+        .eq('status', 'published').eq('series_slug', seriesSlug),
+    ])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    prevSeriesPost = (prevRes.data ?? null) as any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    nextSeriesPost = (nextRes.data ?? null) as any
+    seriesTotal = countRes.count ?? 0
+  }
 
   return (
     <article className="max-w-2xl mx-auto">
@@ -69,6 +92,37 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             prose-img:rounded-xl"
         />
       )}
+      {/* Series navigation */}
+      {seriesSlug && (prevSeriesPost || nextSeriesPost) && (
+        <nav className="mt-16 pt-8 border-t border-white/10">
+          {seriesOrder && seriesTotal > 0 && (
+            <p className="text-xs text-white/30 uppercase tracking-widest text-center mb-6">
+              Part {seriesOrder} of {seriesTotal} in this series
+            </p>
+          )}
+          <div className="grid grid-cols-2 gap-4">
+            {prevSeriesPost ? (
+              <Link href={`/blog/${prevSeriesPost.slug}`}
+                className="group p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
+                <span className="flex items-center gap-1.5 text-xs text-white/30 uppercase tracking-wider mb-2">
+                  <ArrowLeft size={11} /> Previous
+                </span>
+                <p className="text-sm text-white/80 group-hover:text-white transition-colors leading-snug">{prevSeriesPost.title}</p>
+              </Link>
+            ) : <div />}
+            {nextSeriesPost ? (
+              <Link href={`/blog/${nextSeriesPost.slug}`}
+                className="group p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-right">
+                <span className="flex items-center gap-1.5 text-xs text-white/30 uppercase tracking-wider mb-2 justify-end">
+                  Next <ArrowRight size={11} />
+                </span>
+                <p className="text-sm text-white/80 group-hover:text-white transition-colors leading-snug">{nextSeriesPost.title}</p>
+              </Link>
+            ) : <div />}
+          </div>
+        </nav>
+      )}
+
       <CommentsSection contentType="post" contentSlug={slug} />
     </article>
   )
