@@ -6,10 +6,19 @@ import { useState } from 'react'
 import { X, Image as ImageIcon, Link as LinkIcon } from 'lucide-react'
 import type { ReactNodeViewProps } from '@tiptap/react'
 
+const WIDTH_PRESETS = [
+  { label: '1/3', value: '33%' },
+  { label: '1/2', value: '50%' },
+  { label: '2/3', value: '66%' },
+  { label: '3/4', value: '75%' },
+  { label: 'Full', value: '100%' },
+]
+
 function FigureView({ node, updateAttributes, deleteNode }: ReactNodeViewProps) {
   const src = node.attrs.src as string
   const caption = node.attrs.caption as string
   const captionHref = node.attrs.captionHref as string
+  const width = (node.attrs.width as string) || '100%'
   const [editing, setEditing] = useState(!src)
   const [draftSrc, setDraftSrc] = useState(src ?? '')
   const [showLink, setShowLink] = useState(!!captionHref)
@@ -21,7 +30,7 @@ function FigureView({ node, updateAttributes, deleteNode }: ReactNodeViewProps) 
 
   return (
     <NodeViewWrapper>
-      <figure className="my-6 not-prose" contentEditable={false}>
+      <figure style={{ maxWidth: width, margin: '0 auto' }} className="my-6 not-prose" contentEditable={false}>
         {!src || editing ? (
           <div className="border border-zinc-700 rounded-xl overflow-hidden bg-zinc-900">
             <div className="p-4 flex gap-2">
@@ -38,6 +47,15 @@ function FigureView({ node, updateAttributes, deleteNode }: ReactNodeViewProps) 
           <div className="relative group rounded-xl overflow-hidden bg-zinc-900">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={src} alt={caption || ''} className="w-full h-auto block max-w-full rounded-xl" />
+            {/* Width presets overlay */}
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 bg-zinc-900/80 rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-all">
+              {WIDTH_PRESETS.map(p => (
+                <button key={p.value} onClick={() => updateAttributes({ width: p.value })}
+                  className={`text-xs px-1.5 py-0.5 rounded transition-colors ${width === p.value ? 'bg-violet-600 text-white' : 'text-zinc-400 hover:text-white'}`}>
+                  {p.label}
+                </button>
+              ))}
+            </div>
             <button onClick={() => setEditing(true)}
               className="absolute top-2 right-10 p-1.5 bg-zinc-900/80 rounded-lg text-zinc-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all" title="Change image">
               <ImageIcon size={14} />
@@ -93,6 +111,7 @@ export const FigureNode = Node.create({
       src: { default: '' },
       caption: { default: '' },
       captionHref: { default: '' },
+      width: { default: '100%' },
     }
   },
 
@@ -103,18 +122,19 @@ export const FigureNode = Node.create({
         src: dom.querySelector('img')?.getAttribute('src') ?? '',
         caption: dom.querySelector('figcaption a, figcaption')?.textContent ?? '',
         captionHref: dom.querySelector('figcaption a')?.getAttribute('href') ?? '',
+        width: dom.getAttribute('data-width') ?? '100%',
       }),
     }]
   },
 
   renderHTML({ node }) {
-    const { src, caption, captionHref } = node.attrs as { src: string; caption: string; captionHref: string }
+    const { src, caption, captionHref, width } = node.attrs as { src: string; caption: string; captionHref: string; width: string }
     const figcaption = caption
       ? captionHref
         ? ['figcaption', {}, ['a', { href: captionHref, target: '_blank', rel: 'noopener noreferrer' }, caption]]
         : ['figcaption', {}, caption]
       : null
-    return ['figure', { 'data-figure': '' },
+    return ['figure', { 'data-figure': '', 'data-width': width || '100%' },
       ['img', { src, alt: caption || '' }],
       ...(figcaption ? [figcaption] : []),
     ]

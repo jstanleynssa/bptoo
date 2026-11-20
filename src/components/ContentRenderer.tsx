@@ -48,7 +48,7 @@ function videoEmbedUrl(url: string): string | null {
   return url
 }
 
-function VideoRenderer({ src, onPlay }: { src: string; onPlay?: () => void }) {
+function VideoRenderer({ src, onPlay, width }: { src: string; onPlay?: () => void; width?: string }) {
   const embed = videoEmbedUrl(src)
   if (!embed) return null
   return (
@@ -171,9 +171,10 @@ export default function ContentRenderer({ html, className, onVideoPlay, videoPla
         const captionAEl = captionEl?.children?.find((c): c is Element => c instanceof Element && c.name === 'a')
         const textNodes = (captionAEl ?? captionEl)?.children
         const caption = textNodes?.map((c) => ('data' in c ? (c as {data?: string}).data : '') ?? '').join('') ?? ''
+        const figWidth = domNode.attribs['data-width'] ?? '100%'
         if (!src) return <></>
         return (
-          <figure className="my-6 not-prose">
+          <figure className="my-6 not-prose" style={figWidth !== '100%' ? { maxWidth: figWidth, margin: '0 auto' } : undefined}>
             <img
               src={src}
               alt={caption}
@@ -227,9 +228,10 @@ export default function ContentRenderer({ html, className, onVideoPlay, videoPla
         const src = domNode.attribs['data-src'] ?? ''
         const videoCaption = domNode.attribs['data-caption'] ?? ''
         const videoCaptionHref = domNode.attribs['data-caption-href'] ?? ''
+        const videoWidth = domNode.attribs['data-width'] ?? '100%'
         return (
           <>
-            <VideoRenderer src={src} onPlay={handleVideoPlay} />
+            <VideoRenderer src={src} onPlay={handleVideoPlay} width={videoWidth} />
             {videoCaption && (
               <p className="text-center text-sm italic opacity-50 -mt-4 mb-6">
                 {videoCaptionHref
