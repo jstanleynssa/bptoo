@@ -256,8 +256,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         </nav>
       )}
 
-      <CommentsSection contentType="project" contentSlug={slug} />
-
       {/* Stage index */}
       {stages.length > 0 && (
         <section className="mt-16 pt-10 border-t border-white/10">
@@ -288,6 +286,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           </div>
         </section>
       )}
+
+            <CommentsSection contentType="project" contentSlug={slug} />
 
       {/* Prev / Next project navigation */}
       {(prevProject || nextProject) && (
