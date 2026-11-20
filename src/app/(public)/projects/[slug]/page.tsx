@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, ExternalLink, Download } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Calendar, ExternalLink, Download } from 'lucide-react'
 import ToolBadge from '@/components/ToolBadge'
 import { format } from 'date-fns'
 import ContentRenderer from '@/components/ContentRenderer'
@@ -65,6 +65,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     seriesTotal = countRes.count ?? 0
   }
   const statusInfo = project.project_status ? STATUS_LABELS[project.project_status] : null
+
+  // Fetch project stages if any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: stagesData } = await (supabase.from('project_stages') as any)
+    .select('id, title, order_num, date, cover_image_url')
+    .eq('project_id', project.id)
+    .order('order_num')
+  const stages = (stagesData ?? []) as { id: string; title: string; order_num: number; date: string | null; cover_image_url: string | null }[]
   const attachments = (project.attachments as unknown as Attachment[]) ?? []
   const gallery = project.images ?? []
   const embedUrl = project.video_url ? videoEmbedUrl(project.video_url) : null
@@ -249,6 +257,37 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       )}
 
       <CommentsSection contentType="project" contentSlug={slug} />
+
+      {/* Stage index */}
+      {stages.length > 0 && (
+        <section className="mt-16 pt-10 border-t border-white/10">
+          <h2 className="text-lg font-semibold text-white mb-6" style={{ fontFamily: 'Peralta, serif' }}>
+            Project Log — {stages.length} {stages.length === 1 ? 'Stage' : 'Stages'}
+          </h2>
+          <div className="space-y-3">
+            {stages.map(s => (
+              <a key={s.id} href={`/projects/${slug}/stage/${s.order_num}`}
+                className="group flex items-start gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
+                {s.cover_image_url && (
+                  <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                    <img src={s.cover_image_url} alt={s.title} className="w-full h-full object-cover" />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-white/30 uppercase tracking-widest mb-1">Stage {s.order_num}</p>
+                  <p className="text-sm text-white/80 group-hover:text-white transition-colors font-medium leading-snug">{s.title}</p>
+                  {s.date && (
+                    <p className="text-xs text-white/30 mt-1 flex items-center gap-1">
+                      <Calendar size={10} /> {new Date(s.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    </p>
+                  )}
+                </div>
+                <span className="text-white/20 group-hover:text-white/60 transition-colors text-sm mt-1">→</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Prev / Next project navigation */}
       {(prevProject || nextProject) && (
