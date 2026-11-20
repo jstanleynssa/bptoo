@@ -51,8 +51,9 @@ function videoEmbedUrl(url: string): string | null {
 function VideoRenderer({ src, onPlay, width }: { src: string; onPlay?: () => void; width?: string }) {
   const embed = videoEmbedUrl(src)
   if (!embed) return null
+  const wrapStyle = width && width !== '100%' ? { maxWidth: width, margin: '0 auto' } : undefined
   return (
-    <div className="my-8 not-prose">
+    <div className="my-8 not-prose" style={wrapStyle}>
       {src.match(/\.(mp4|webm|ogg|mov|m4v|avi)$/i) ? (
         <video controls className="w-full rounded-2xl aspect-video bg-black" onPlay={onPlay}>
           <source src={embed} />
