@@ -111,7 +111,7 @@ export default async function ProjectStagePage({
       )}
 
       {/* Stage navigation */}
-      <nav className="mt-16 pt-8 border-t border-white/10">
+      <nav className="mt-10 pt-8 border-t border-white/10">
         <div className="grid grid-cols-2 gap-4">
           {prevStage ? (
             <Link href={`/projects/${slug}/stage/${prevStage.order_num}`}
@@ -142,7 +142,7 @@ export default async function ProjectStagePage({
         </div>
       </nav>
 
-      <div className="mt-16">
+      <div className="mt-20 pt-8 border-t border-white/5">
         <CommentsSection contentType="project" contentSlug={`${slug}-stage-${orderNum}`} />
       </div>
     </article>
