@@ -41,6 +41,29 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const { data } = await supabase.from('projects').select('*').eq('slug', slug).eq('status', 'published').single()
   if (!data) notFound()
   const project = data as Project
+  const seriesSlug = (project as any).series_slug as string | null
+  const seriesOrder = (project as any).series_order as number | null
+
+  let prevSeriesProject: { title: string; slug: string; cover_image_url?: string | null } | null = null
+  let nextSeriesProject: { title: string; slug: string; cover_image_url?: string | null } | null = null
+  let seriesTotal = 0
+
+  if (seriesSlug && seriesOrder) {
+    const [prevRes, nextRes, countRes] = await Promise.all([
+      supabase.from('projects').select('title, slug, cover_image_url').eq('status', 'published')
+        .eq('series_slug', seriesSlug).eq('series_order', seriesOrder - 1).maybeSingle(),
+      supabase.from('projects').select('title, slug, cover_image_url').eq('status', 'published')
+        .eq('series_slug', seriesSlug).eq('series_order', seriesOrder + 1).maybeSingle(),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase.from('projects') as any).select('id', { count: 'exact', head: true })
+        .eq('status', 'published').eq('series_slug', seriesSlug),
+    ])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    prevSeriesProject = (prevRes.data ?? null) as any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    nextSeriesProject = (nextRes.data ?? null) as any
+    seriesTotal = countRes.count ?? 0
+  }
   const statusInfo = project.project_status ? STATUS_LABELS[project.project_status] : null
   const attachments = (project.attachments as unknown as Attachment[]) ?? []
   const gallery = project.images ?? []
@@ -192,6 +215,39 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           </div>
         </section>
       )}
+      {/* Series navigation */}
+      {seriesSlug && (prevSeriesProject || nextSeriesProject) && (
+        <nav className="mt-16 pt-8 border-t border-white/10">
+          {seriesOrder && seriesTotal > 0 && (
+            <p className="text-xs text-white/30 uppercase tracking-widest text-center mb-6">
+              Part {seriesOrder} of {seriesTotal} in this series
+            </p>
+          )}
+          <div className="grid grid-cols-2 gap-4">
+            {prevSeriesProject ? (
+              <Link href={`/projects/${prevSeriesProject.slug}`}
+                className="group relative overflow-hidden rounded-xl bg-white/5 hover:bg-white/10 transition-colors p-4 min-h-[100px] flex flex-col justify-between">
+                {prevSeriesProject.cover_image_url && (
+                  <Image src={prevSeriesProject.cover_image_url} alt="" fill className="object-cover opacity-20 group-hover:opacity-30 transition-opacity" sizes="300px" />
+                )}
+                <span className="relative flex items-center gap-1.5 text-xs text-white/30 uppercase tracking-wider"><ArrowLeft size={11} /> Previous</span>
+                <p className="relative text-sm text-white/80 group-hover:text-white transition-colors leading-snug mt-2">{prevSeriesProject.title}</p>
+              </Link>
+            ) : <div />}
+            {nextSeriesProject ? (
+              <Link href={`/projects/${nextSeriesProject.slug}`}
+                className="group relative overflow-hidden rounded-xl bg-white/5 hover:bg-white/10 transition-colors p-4 min-h-[100px] flex flex-col justify-between text-right">
+                {nextSeriesProject.cover_image_url && (
+                  <Image src={nextSeriesProject.cover_image_url} alt="" fill className="object-cover opacity-20 group-hover:opacity-30 transition-opacity" sizes="300px" />
+                )}
+                <span className="relative flex items-center gap-1.5 text-xs text-white/30 uppercase tracking-wider justify-end">Next <ArrowRight size={11} /></span>
+                <p className="relative text-sm text-white/80 group-hover:text-white transition-colors leading-snug mt-2">{nextSeriesProject.title}</p>
+              </Link>
+            ) : <div />}
+          </div>
+        </nav>
+      )}
+
       <CommentsSection contentType="project" contentSlug={slug} />
 
       {/* Prev / Next project navigation */}
