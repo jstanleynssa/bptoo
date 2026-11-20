@@ -30,6 +30,8 @@ export default function PostForm({ post, categories }: PostFormProps) {
     post?.published_at ? post.published_at.slice(0, 10) : ''
   )
   const [hoursSpent, setHoursSpent] = useState<string>(post?.hours_spent?.toString() ?? '')
+  const [seriesSlug, setSeriesSlug] = useState<string>((post as any)?.series_slug ?? '')
+  const [seriesOrder, setSeriesOrder] = useState<string>((post as any)?.series_order?.toString() ?? '')
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
 
@@ -53,6 +55,8 @@ export default function PostForm({ post, categories }: PostFormProps) {
       cover_image_url: coverImageUrl || null,
       category_id: categoryId || null,
       hours_spent: hoursSpent ? parseFloat(hoursSpent) : null,
+      series_slug: seriesSlug.trim() || null,
+      series_order: seriesOrder ? parseInt(seriesOrder) : null,
       status: finalStatus,
       published_at: publishedAt
         ? new Date(publishedAt).toISOString()
@@ -142,6 +146,31 @@ export default function PostForm({ post, categories }: PostFormProps) {
             {status === 'published' ? 'Update' : 'Publish'}
           </button>
         </div>
+
+          {/* Series grouping */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs text-zinc-500 mb-1.5 uppercase tracking-wider">Series slug</label>
+              <input
+                type="text"
+                value={seriesSlug}
+                onChange={e => setSeriesSlug(e.target.value)}
+                placeholder="e.g. hardy-boys-dev"
+                className="w-full px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:border-violet-500 outline-none transition-colors"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-zinc-500 mb-1.5 uppercase tracking-wider">Series order</label>
+              <input
+                type="number"
+                value={seriesOrder}
+                onChange={e => setSeriesOrder(e.target.value)}
+                placeholder="1"
+                min="1"
+                className="w-full px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:border-violet-500 outline-none transition-colors"
+              />
+            </div>
+          </div>
       </div>
 
       <div className="space-y-6">
