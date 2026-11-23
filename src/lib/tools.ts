@@ -30,6 +30,7 @@ export const TOOLS: Tool[] = [
   { id: '3dprint',      label: '3D Printing',  emoji: '🖨️', color: '#E76F51',                               description: 'Additive manufacturing & rapid prototyping' },
   { id: 'elegoo',       label: 'Elegoo',       emoji: '🖨️', color: '#3A86FF', domain: 'elegoo.com',          description: 'Resin & FDM 3D printer used for models & prototypes' },
   { id: 'blender',      label: 'Blender',      emoji: '🎨',  color: '#E87D0D', domain: 'blender.org',         description: '3D modeling, sculpting, animation & rendering' },
+  { id: 'fusion',       label: 'Autodesk Fusion', emoji: '⚙️', color: '#0696D7', domain: 'autodesk.com',        description: 'CAD/CAM 3D modeling & engineering design' },
   { id: 'sewing',       label: 'Sewing',       emoji: '🧵',  color: '#E63946',                               description: 'Hand or machine sewing & fabric work' },
   { id: 'woodworking',  label: 'Woodworking',  emoji: '🪵',  color: '#8B4513',                               description: 'Hand & power tool woodworking and carpentry' },
   // ── AI / digital ─────────────────────────────────────────────────────────
@@ -49,6 +50,7 @@ export const TOOLS: Tool[] = [
   { id: 'nanobanana',   label: 'Nano Banana',  emoji: '🍌',  color: '#FFD93D',                               description: 'AI image generation model' },
   // ── Dev / design ─────────────────────────────────────────────────────────
   { id: 'finaldraft',   label: 'Final Draft',  emoji: '📝',  color: '#0066CC', domain: 'finaldraft.com',      description: 'Industry-standard screenwriting software' },
+  { id: 'vscode',       label: 'VS Code',      emoji: '📝',  color: '#007ACC', domain: 'code.visualstudio.com', description: 'Code editor & development environment' },
   { id: 'code',         label: 'Custom Code',  emoji: '💻',  color: '#4B9CE2',                               description: 'Hand-written software & scripting' },
   { id: 'figma',        label: 'Figma',        emoji: '🎯',  color: '#F24E1E', domain: 'figma.com',          description: 'Collaborative UI design & prototyping' },
   { id: 'davinci',      label: 'DaVinci Resolve', abbr: 'DV', color: '#FFB400', bg: '#1A1A2E',               description: 'Professional video editing & color grading' },
