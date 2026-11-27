@@ -69,10 +69,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   // Fetch project stages if any
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: stagesData } = await (supabase.from('project_stages') as any)
-    .select('id, title, order_num, date, cover_image_url')
+    .select('id, title, order_num, date, cover_image_url, hours_spent')
     .eq('project_id', project.id)
     .order('order_num')
-  const stages = (stagesData ?? []) as { id: string; title: string; order_num: number; date: string | null; cover_image_url: string | null }[]
+  const stages = (stagesData ?? []) as { id: string; title: string; order_num: number; date: string | null; cover_image_url: string | null; hours_spent: number | null }[]
+  const stageHoursTotal = stages.reduce((sum, s) => sum + (s.hours_spent ?? 0), 0)
   const attachments = (project.attachments as unknown as Attachment[]) ?? []
   const gallery = project.images ?? []
   const embedUrl = project.video_url ? videoEmbedUrl(project.video_url) : null

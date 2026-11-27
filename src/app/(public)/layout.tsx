@@ -29,8 +29,24 @@ export default async function PublicLayout({ children }: { children: React.React
     )
     if (res.ok) {
       const data = await res.json() as { hours_spent: number }[]
-      totalHours = Math.round(data.reduce((sum, p) => sum + (p.hours_spent ?? 0), 0))
+      totalHours = data.reduce((sum, p) => sum + (p.hours_spent ?? 0), 0)
     }
+    // Also add stage hours
+    const stageRes = await fetch(
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/project_stages?select=hours_spent&hours_spent=not.is.null`,
+      {
+        headers: {
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+        },
+        next: { revalidate: 300 },
+      }
+    )
+    if (stageRes.ok) {
+      const stageData = await stageRes.json() as { hours_spent: number }[]
+      totalHours += stageData.reduce((sum, s) => sum + (s.hours_spent ?? 0), 0)
+    }
+    totalHours = Math.round(totalHours)
   } catch {}
 
   return (
