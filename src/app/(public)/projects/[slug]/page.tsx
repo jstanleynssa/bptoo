@@ -113,9 +113,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             {statusInfo.emoji} {statusInfo.label}
           </span>
         )}
-        {project.hours_spent && (
+        {(stageHoursTotal > 0 || project.hours_spent) && (
           <span className="text-sm px-3 py-1 rounded-full bg-white/10 text-white/60">
-            ⏱ {project.hours_spent % 1 === 0 ? project.hours_spent : Number(project.hours_spent).toFixed(1)}h invested
+            ⏱ {(() => {
+              const hrs = stageHoursTotal > 0 ? stageHoursTotal : project.hours_spent as number
+              return hrs % 1 === 0 ? hrs : Number(hrs).toFixed(1)
+            })()}h
           </span>
         )}
         {project.project_date && (
